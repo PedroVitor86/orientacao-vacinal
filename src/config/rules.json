@@ -1,0 +1,176 @@
+[
+  {
+    "vaccine_code": "COVID_19",
+    "vaccine_name": "Vacina contra COVID-19",
+    "rule_name": "Elegibilidade COVID-19 por Grupos Especiais ou Comorbidades",
+    "description": "Indicação periódica/reforço prioritário conforme diretrizes do PNI.",
+    "conditions": {
+      "any": [
+        { "fact": "is_ilpi_resident", "operator": "equal", "value": true, "reason": "Residente em instituição de longa permanência (ILPI)" },
+        { "fact": "is_ilpi_worker", "operator": "equal", "value": true, "reason": "Trabalhador de instituição de longa permanência (ILPI)" },
+        { "fact": "is_health_worker", "operator": "equal", "value": true, "reason": "Trabalhador da área da saúde" },
+        { "fact": "is_postpartum", "operator": "equal", "value": true, "reason": "Puérpera (mulher em período pós-parto)" },
+        { "fact": "is_indigenous", "operator": "equal", "value": true, "reason": "Indivíduo de população indígena" },
+        { "fact": "is_riverine", "operator": "equal", "value": true, "reason": "Comunidade tradicional ribeirinha" },
+        { "fact": "is_quilombola", "operator": "equal", "value": true, "reason": "Comunidade tradicional quilombola" },
+        { "fact": "has_permanent_disability", "operator": "equal", "value": true, "reason": "Pessoa com deficiência permanente" },
+        { "fact": "is_deprived_of_liberty", "operator": "equal", "value": true, "reason": "Pessoa privada de liberdade" },
+        { "fact": "is_prison_system_staff", "operator": "equal", "value": true, "reason": "Funcionário do sistema prisional" },
+        { "fact": "is_homeless", "operator": "equal", "value": true, "reason": "Pessoa em situação de rua" },
+        { "fact": "has_diabetes", "operator": "equal", "value": true, "reason": "Diabetes Mellitus" },
+        { "fact": "has_copd", "operator": "equal", "value": true, "reason": "Doença Pulmonar Obstrutiva Crônica (DPOC)" },
+        { "fact": "has_asthma", "operator": "equal", "value": true, "reason": "Asma crônica ou grave" },
+        { "fact": "has_pulmonary_fibrosis", "operator": "equal", "value": true, "reason": "Fibrose pulmonar" },
+        { "fact": "has_cystic_fibrosis", "operator": "equal", "value": true, "reason": "Fibrose cística" },
+        { "fact": "has_other_chronic_lung", "operator": "equal", "value": true, "reason": "Outra doença pulmonar crônica" },
+        { "fact": "has_heart_failure", "operator": "equal", "value": true, "reason": "Insuficiência Cardíaca" },
+        { "fact": "has_coronary_disease", "operator": "equal", "value": true, "reason": "Doença Arterial Coronariana" },
+        { "fact": "has_congenital_heart_disease", "operator": "equal", "value": true, "reason": "Cardiopatia congênita" },
+        { "fact": "has_arrhythmia", "operator": "equal", "value": true, "reason": "Arritmia cardíaca" },
+        { "fact": "has_cardiomyopathy", "operator": "equal", "value": true, "reason": "Cardiomiopatia" },
+        { "fact": "has_resistant_hypertension", "operator": "equal", "value": true, "reason": "Hipertensão arterial resistente" },
+        { "fact": "has_hypertension_target_organ", "operator": "equal", "value": true, "reason": "Hipertensão com lesão em órgão-alvo" },
+        { "fact": "has_other_cardiovascular", "operator": "equal", "value": true, "reason": "Outra doença cardiovascular crônica" },
+        { "fact": "has_chronic_kidney_disease", "operator": "equal", "value": true, "reason": "Doença renal crônica" },
+        { "fact": "is_hemodialysis", "operator": "equal", "value": true, "reason": "Em programa de hemodiálise" },
+        { "fact": "has_nephrotic_syndrome", "operator": "equal", "value": true, "reason": "Síndrome nefrótica" },
+        { "fact": "has_renal_replacement", "operator": "equal", "value": true, "reason": "Terapia de substituição renal" },
+        { "fact": "has_chronic_liver_disease", "operator": "equal", "value": true, "reason": "Doença hepática crônica" },
+        { "fact": "has_stroke_sequelae", "operator": "equal", "value": true, "reason": "AVC com sequelas" },
+        { "fact": "has_multiple_sclerosis", "operator": "equal", "value": true, "reason": "Esclerose múltipla" },
+        { "fact": "has_als", "operator": "equal", "value": true, "reason": "Esclerose Lateral Amiotrófica (ELA)" },
+        { "fact": "has_muscular_dystrophy", "operator": "equal", "value": true, "reason": "Distrofia muscular" },
+        { "fact": "has_cerebral_palsy", "operator": "equal", "value": true, "reason": "Paralisia cerebral" },
+        { "fact": "has_other_neurological", "operator": "equal", "value": true, "reason": "Doença neurológica crônica" },
+        { "fact": "has_sickle_cell", "operator": "equal", "value": true, "reason": "Anemia falciforme" },
+        { "fact": "has_thalassemia", "operator": "equal", "value": true, "reason": "Talassemia" },
+        { "fact": "has_other_hemoglobinopathies", "operator": "equal", "value": true, "reason": "Hemoglobinopatia" },
+        { "fact": "has_morbid_obesity_bmi_40", "operator": "equal", "value": true, "reason": "Obesidade grau III (IMC ≥ 40)" },
+        { "fact": "has_down_syndrome", "operator": "equal", "value": true, "reason": "Síndrome de Down" },
+        { "fact": "has_hiv_aids", "operator": "equal", "value": true, "reason": "Infecção por HIV/AIDS" },
+        { "fact": "has_transplant", "operator": "equal", "value": true, "reason": "Transplante de órgão ou medula" },
+        { "fact": "uses_immunosuppressants", "operator": "equal", "value": true, "reason": "Uso de medicamentos imunossupressores" },
+        { "fact": "is_chemotherapy", "operator": "equal", "value": true, "reason": "Tratamento de quimioterapia" },
+        { "fact": "is_radiotherapy", "operator": "equal", "value": true, "reason": "Tratamento de radioterapia" },
+        { "fact": "has_congenital_immunodeficiency", "operator": "equal", "value": true, "reason": "Imunodeficiência congênita" },
+        { "fact": "has_other_immunosuppression", "operator": "equal", "value": true, "reason": "Outra condição que compromete a imunidade" },
+        { "fact": "has_cancer", "operator": "equal", "value": true, "reason": "Diagnóstico de neoplasia / câncer" }
+      ]
+    }
+  },
+  {
+    "vaccine_code": "VSR",
+    "vaccine_name": "Vacina contra VSR",
+    "rule_name": "Elegibilidade Vírus Sincicial Respiratório (Materna e Adultos)",
+    "description": "Prevenção de complicações respiratórias graves em neonatos e adultos vulneráveis.",
+    "conditions": {
+      "any": [
+        {
+          "all": [
+            { "fact": "is_pregnant", "operator": "equal", "value": true },
+            { "fact": "pregnancy_weeks_32_36", "operator": "equal", "value": true }
+          ],
+          "reason": "Gestante entre 32 e 36 semanas (proteção passiva contra bronquiolite no bebê)"
+        },
+        {
+          "fact": "age",
+          "operator": "greaterThanInclusive",
+          "value": 75,
+          "reason": "Idade igual ou superior a 75 anos"
+        },
+        {
+          "all": [
+            { "fact": "age", "operator": "greaterThanInclusive", "value": 50 },
+            { "fact": "age", "operator": "lessThanInclusive", "value": 74 },
+            {
+              "any": [
+                { "fact": "has_diabetes", "operator": "equal", "value": true, "reason": "Idade entre 50 e 74 anos com Diabetes" },
+                { "fact": "has_morbid_obesity_bmi_40", "operator": "equal", "value": true, "reason": "Idade entre 50 e 74 anos com Obesidade severa (IMC ≥ 40)" },
+                { "fact": "has_asthma", "operator": "equal", "value": true, "reason": "Idade entre 50 e 74 anos com Asma" },
+                { "fact": "has_copd", "operator": "equal", "value": true, "reason": "Idade entre 50 e 74 anos com DPOC" },
+                { "fact": "has_pulmonary_fibrosis", "operator": "equal", "value": true, "reason": "Idade entre 50 e 74 anos com Fibrose pulmonar" },
+                { "fact": "has_chronic_kidney_disease", "operator": "equal", "value": true, "reason": "Idade entre 50 e 74 anos com Doença Renal Crônica" },
+                { "fact": "is_hemodialysis", "operator": "equal", "value": true, "reason": "Idade entre 50 e 74 anos em Hemodiálise" },
+                { "fact": "has_heart_failure", "operator": "equal", "value": true, "reason": "Idade entre 50 e 74 anos com Insuficiência Cardíaca" },
+                { "fact": "has_coronary_disease", "operator": "equal", "value": true, "reason": "Idade entre 50 e 74 anos com Doença Arterial Coronariana" },
+                { "fact": "has_congenital_heart_disease", "operator": "equal", "value": true, "reason": "Idade entre 50 e 74 anos com Cardiopatia" },
+                { "fact": "has_arrhythmia", "operator": "equal", "value": true, "reason": "Idade entre 50 e 74 anos com Arritmia cardíaca" },
+                { "fact": "has_cardiomyopathy", "operator": "equal", "value": true, "reason": "Idade entre 50 e 74 anos com Cardiomiopatia" },
+                { "fact": "has_hiv_aids", "operator": "equal", "value": true, "reason": "Idade entre 50 e 74 anos com Imunossupressão (HIV/AIDS)" },
+                { "fact": "has_transplant", "operator": "equal", "value": true, "reason": "Idade entre 50 e 74 anos com Transplante" },
+                { "fact": "uses_immunosuppressants", "operator": "equal", "value": true, "reason": "Idade entre 50 e 74 anos em uso de Imunossupressores" },
+                { "fact": "is_chemotherapy", "operator": "equal", "value": true, "reason": "Idade entre 50 e 74 anos em Quimioterapia" },
+                { "fact": "has_other_immunosuppression", "operator": "equal", "value": true, "reason": "Idade entre 50 e 74 anos com condição que compromete a imunidade" },
+                { "fact": "has_cancer", "operator": "equal", "value": true, "reason": "Idade entre 50 e 74 anos com histórico de Câncer" },
+                { "fact": "has_stroke_sequelae", "operator": "equal", "value": true, "reason": "Idade entre 50 e 74 anos com Doença Neurológica" },
+                { "fact": "has_multiple_sclerosis", "operator": "equal", "value": true, "reason": "Idade entre 50 e 74 anos com Esclerose Múltipla" },
+                { "fact": "has_other_neurological", "operator": "equal", "value": true, "reason": "Idade entre 50 e 74 anos com Doença Neurológica" },
+                { "fact": "has_chronic_liver_disease", "operator": "equal", "value": true, "reason": "Idade entre 50 e 74 anos com Doença Hepática" },
+                { "fact": "has_sickle_cell", "operator": "equal", "value": true, "reason": "Idade entre 50 e 74 anos com Hemoglobinopatia" },
+                { "fact": "has_clinical_frailty", "operator": "equal", "value": true, "reason": "Idade entre 50 e 74 anos com Fragilidade clínica" },
+                { "fact": "is_ilpi_resident", "operator": "equal", "value": true, "reason": "Idade entre 50 e 74 anos residente em ILPI" }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "vaccine_code": "PNEUMO_20",
+    "vaccine_name": "Vacina Pneumocócica 20-valente",
+    "rule_name": "Elegibilidade Pneumocócica Conjugada",
+    "description": "Proteção contra 20 sorotipos de Streptococcus pneumoniae causadores de pneumonia e meningite.",
+    "conditions": {
+      "any": [
+        {
+          "fact": "age",
+          "operator": "greaterThanInclusive",
+          "value": 50,
+          "reason": "Recomendação universal para adultos a partir de 50 anos"
+        },
+        {
+          "all": [
+            { "fact": "age", "operator": "greaterThanInclusive", "value": 18 },
+            { "fact": "age", "operator": "lessThanInclusive", "value": 49 },
+            {
+              "any": [
+                { "fact": "has_diabetes", "operator": "equal", "value": true, "reason": "Diabetes Mellitus" },
+                { "fact": "has_asthma", "operator": "equal", "value": true, "reason": "Asma crônica" },
+                { "fact": "has_copd", "operator": "equal", "value": true, "reason": "Doença Pulmonar Obstrutiva Crônica (DPOC)" },
+                { "fact": "has_emphysema", "operator": "equal", "value": true, "reason": "Enfisema pulmonar" },
+                { "fact": "has_pulmonary_fibrosis", "operator": "equal", "value": true, "reason": "Fibrose pulmonar" },
+                { "fact": "has_other_chronic_lung", "operator": "equal", "value": true, "reason": "Doença pulmonar crônica" },
+                { "fact": "has_heart_failure", "operator": "equal", "value": true, "reason": "Insuficiência Cardíaca" },
+                { "fact": "has_coronary_disease", "operator": "equal", "value": true, "reason": "Doença Arterial Coronariana" },
+                { "fact": "has_congenital_heart_disease", "operator": "equal", "value": true, "reason": "Cardiopatia" },
+                { "fact": "has_other_cardiovascular", "operator": "equal", "value": true, "reason": "Doença cardiovascular crônica" },
+                { "fact": "has_chronic_kidney_disease", "operator": "equal", "value": true, "reason": "Doença Renal Crônica" },
+                { "fact": "has_nephrotic_syndrome", "operator": "equal", "value": true, "reason": "Síndrome Nefrótica" },
+                { "fact": "has_chronic_liver_disease", "operator": "equal", "value": true, "reason": "Doença Hepática Crônica" },
+                { "fact": "has_hiv_aids", "operator": "equal", "value": true, "reason": "HIV/AIDS" },
+                { "fact": "uses_immunosuppressants", "operator": "equal", "value": true, "reason": "Uso crônico de imunossupressores" },
+                { "fact": "is_chemotherapy", "operator": "equal", "value": true, "reason": "Quimioterapia atual ou recente" },
+                { "fact": "is_radiotherapy", "operator": "equal", "value": true, "reason": "Radioterapia atual ou recente" },
+                { "fact": "has_transplant", "operator": "equal", "value": true, "reason": "Transplante de órgãos sólidos ou medula" },
+                { "fact": "has_other_immunosuppression", "operator": "equal", "value": true, "reason": "Outra condição que compromete o sistema imunológico" },
+                { "fact": "has_sickle_cell", "operator": "equal", "value": true, "reason": "Anemia Falciforme" },
+                { "fact": "has_thalassemia", "operator": "equal", "value": true, "reason": "Talassemia" },
+                { "fact": "has_leukemia", "operator": "equal", "value": true, "reason": "Leucemia" },
+                { "fact": "has_lymphoma", "operator": "equal", "value": true, "reason": "Linfoma" },
+                { "fact": "has_multiple_myeloma", "operator": "equal", "value": true, "reason": "Mieloma Múltiplo" },
+                { "fact": "has_hodgkin_disease", "operator": "equal", "value": true, "reason": "Doença de Hodgkin" },
+                { "fact": "has_cancer", "operator": "equal", "value": true, "reason": "Neoplasia maligna ativa" },
+                { "fact": "has_asplenia", "operator": "equal", "value": true, "reason": "Asplenia anatômica ou funcional (ausência ou disfunção do baço)" },
+                { "fact": "has_cochlear_implant", "operator": "equal", "value": true, "reason": "Implante coclear" },
+                { "fact": "has_csf_leak", "operator": "equal", "value": true, "reason": "Fístula liquórica (comunicação com líquido cefalorraquidiano)" },
+                { "fact": "is_smoker", "operator": "equal", "value": true, "reason": "Tabagismo ativo" },
+                { "fact": "has_alcoholism", "operator": "equal", "value": true, "reason": "Consumo abusivo de álcool" }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
+]
