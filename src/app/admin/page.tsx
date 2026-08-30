@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { 
   ShieldCheck, 
   RefreshCw, 
@@ -9,7 +10,11 @@ import {
   Activity, 
   ArrowLeft, 
   Calendar,
-  FileSpreadsheet
+  FileSpreadsheet,
+  Sparkles,
+  HelpCircle,
+  CheckCircle2,
+  AlertCircle
 } from 'lucide-react';
 import { AnalyticsSummary } from '@/services/submission-service';
 
@@ -44,259 +49,411 @@ export default function AdminPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col">
+    <div className="min-h-screen bg-[#080612] text-[#F2F3F7] flex flex-col relative overflow-x-hidden selection:bg-[#7B28E2] selection:text-white">
+      {/* GLOW DE FUNDO */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[320px] sm:w-[800px] h-[200px] sm:h-[300px] bg-gradient-to-tr from-[#7B28E2]/20 to-[#2D67FF]/20 blur-[100px] sm:blur-[130px] pointer-events-none -z-10" />
+
       {/* NAVBAR DO ADMIN */}
-      <header className="sticky top-0 z-40 bg-slate-950 text-white border-b border-slate-800 shadow-md">
-        <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
+      <header className="sticky top-0 z-40 bg-[#080612]/95 backdrop-blur-xl border-b border-[#2B1C58] shadow-xl">
+        <div className="max-w-6xl mx-auto px-3.5 sm:px-6 h-16 sm:h-20 flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2.5 sm:gap-4">
             <Link 
               href="/" 
-              className="text-slate-400 hover:text-white transition inline-flex items-center gap-1.5 text-xs font-semibold"
+              className="text-[#AAB0C6] hover:text-white transition inline-flex items-center gap-1 text-xs font-semibold shrink-0"
             >
-              <ArrowLeft className="w-4 h-4 text-purple-400" />
-              <span>Voltar ao Início</span>
+              <ArrowLeft className="w-4 h-4 text-[#B387F7]" />
+              <span className="hidden sm:inline">Início</span>
             </Link>
-            <span className="text-slate-700">|</span>
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-blue-600 to-purple-600 flex items-center justify-center text-white shadow-xs">
-                <ShieldCheck className="w-5 h-5" />
+            <span className="text-[#2B1C58] hidden sm:inline">|</span>
+            <div className="flex items-center gap-2 sm:gap-3">
+              <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#120E24] p-1 border border-[#2B1C58] shrink-0">
+                <Image
+                  src="/trivax-symbol-v3.png"
+                  alt="TRIVAX"
+                  width={36}
+                  height={36}
+                  className="w-full h-full object-contain rounded-full"
+                  unoptimized
+                />
               </div>
-              <span className="font-extrabold text-sm sm:text-base tracking-tight">
-                Painel do Administrador • Gestão Vacinal
-              </span>
+              <div className="flex flex-col">
+                <span className="font-extrabold text-xs sm:text-base text-white tracking-wide leading-none">
+                  TRIVAX • Painel Admin
+                </span>
+                <span className="text-[9px] sm:text-[10px] text-[#B387F7] uppercase tracking-wider mt-0.5 leading-none">
+                  Indicadores Populacionais
+                </span>
+              </div>
             </div>
           </div>
 
           <button
             onClick={() => loadData()}
             disabled={loading}
-            className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-200 transition cursor-pointer border border-slate-800 hover:border-purple-600"
+            className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 sm:px-4 sm:py-2 rounded-full bg-[#120E24] hover:bg-[#201844] text-[#F2F3F7] transition cursor-pointer border border-[#2B1C58] hover:border-[#7B28E2]"
           >
-            <RefreshCw className={`w-3.5 h-3.5 text-purple-400 ${loading ? 'animate-spin' : ''}`} />
-            <span>Atualizar</span>
+            <RefreshCw className={`w-3.5 h-3.5 text-[#B387F7] ${loading ? 'animate-spin' : ''}`} />
+            <span className="hidden xs:inline">Atualizar</span>
           </button>
         </div>
       </header>
 
-      <main className="flex-1 max-w-6xl w-full mx-auto px-4 py-8 space-y-8">
+      <main className="flex-1 max-w-6xl w-full mx-auto px-3.5 sm:px-6 py-6 sm:py-12 space-y-6 sm:space-y-8">
         {/* BARRA SUPERIOR COM FILTROS E EXPORTAÇÃO */}
-        <div className="bg-white rounded-3xl border border-slate-200 p-6 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="bg-[#120E24] rounded-2xl sm:rounded-3xl border border-[#2B1C58] p-5 sm:p-8 shadow-xl flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-black text-slate-950 tracking-tight">
-              Relatório de Elegibilidade Populacional
+            <h1 className="text-xl sm:text-3xl font-black text-white tracking-tight">
+              Relatório Populacional TRIVAX
             </h1>
-            <p className="text-sm text-slate-500 mt-0.5">
-              Análise epidemiológica consolidada das avaliações respondidas pelos colaboradores.
+            <p className="text-xs sm:text-sm text-[#AAB0C6] mt-0.5">
+              Consolidação epidemiológica das avaliações respondidas pelos colaboradores.
             </p>
           </div>
 
-          <div className="flex items-center gap-3 flex-wrap">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
             {/* SELETOR DE UNIDADE */}
-            <div className="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200 text-xs font-semibold">
+            <div className="flex items-center bg-[#080612] p-1 rounded-full border border-[#2B1C58] text-xs font-semibold overflow-x-auto">
               <button
                 onClick={() => setAffiliationFilter('ALL')}
-                className={`px-3.5 py-1.5 rounded-lg transition cursor-pointer ${
+                className={`flex-1 sm:flex-none px-3 sm:px-4 py-1.5 sm:py-2 rounded-full transition cursor-pointer text-center text-[11px] sm:text-xs whitespace-nowrap ${
                   affiliationFilter === 'ALL'
-                    ? 'bg-slate-950 text-white shadow-xs'
-                    : 'text-slate-600 hover:text-slate-950'
+                    ? 'bg-gradient-to-r from-[#7B28E2] to-[#2D67FF] text-white shadow-md'
+                    : 'text-[#AAB0C6] hover:text-white'
                 }`}
               >
-                Todas as Unidades
+                Todas
               </button>
               <button
                 onClick={() => setAffiliationFilter('PFIZER')}
-                className={`px-3.5 py-1.5 rounded-lg transition cursor-pointer ${
+                className={`flex-1 sm:flex-none px-3 sm:px-4 py-1.5 sm:py-2 rounded-full transition cursor-pointer text-center text-[11px] sm:text-xs whitespace-nowrap ${
                   affiliationFilter === 'PFIZER'
-                    ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-xs'
-                    : 'text-slate-600 hover:text-slate-950'
+                    ? 'bg-gradient-to-r from-[#7B28E2] to-[#2D67FF] text-white shadow-md'
+                    : 'text-[#AAB0C6] hover:text-white'
                 }`}
               >
-                Colega Pfizer
+                Pfizer
               </button>
               <button
                 onClick={() => setAffiliationFilter('ITAPEVI')}
-                className={`px-3.5 py-1.5 rounded-lg transition cursor-pointer ${
+                className={`flex-1 sm:flex-none px-3 sm:px-4 py-1.5 sm:py-2 rounded-full transition cursor-pointer text-center text-[11px] sm:text-xs whitespace-nowrap ${
                   affiliationFilter === 'ITAPEVI'
-                    ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-xs'
-                    : 'text-slate-600 hover:text-slate-950'
+                    ? 'bg-gradient-to-r from-[#7B28E2] to-[#2D67FF] text-white shadow-md'
+                    : 'text-[#AAB0C6] hover:text-white'
                 }`}
               >
                 Itapevi
               </button>
             </div>
 
-            {/* BOTÃO EXPORTAR CSV EXCEL */}
+            {/* BOTÃO EXPORTAR EXCEL MULTI-ABAS */}
             <button
               onClick={handleExportCSV}
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-slate-950 hover:bg-slate-900 border border-slate-800 text-white text-xs font-bold transition shadow-xs cursor-pointer hover:border-purple-500"
-              title="Baixar planilha completa compatível com Microsoft Excel"
+              className="inline-flex items-center justify-center gap-2 px-4 sm:px-5 py-2.5 rounded-full bg-gradient-to-r from-[#7B28E2] to-[#2D67FF] text-white text-xs font-bold transition shadow-lg shadow-[#7B28E2]/30 cursor-pointer hover:opacity-90 active:scale-98"
+              title="Baixar planilha completa organizada em múltiplas abas / páginas no Microsoft Excel"
             >
-              <FileSpreadsheet className="w-4 h-4 text-purple-400" />
-              <span>Exportar para Excel (.CSV)</span>
+              <FileSpreadsheet className="w-4 h-4 text-white" />
+              <span>Exportar Excel (.XLSX)</span>
             </button>
           </div>
         </div>
 
         {/* CARDS DE INDICADORES PRINCIPAIS (KPIs) */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           {/* TOTAL DE AVALIAÇÕES */}
-          <div className="bg-white rounded-3xl border border-slate-200 p-6 shadow-xs space-y-3 hover:border-slate-300 transition">
-            <div className="flex items-center justify-between text-slate-500">
-              <span className="text-xs font-bold uppercase tracking-wider text-slate-700">Total de Pessoas</span>
-              <Users className="w-5 h-5 text-slate-900" />
+          <div className="bg-[#120E24] rounded-2xl sm:rounded-3xl border border-[#2B1C58] p-5 sm:p-6 shadow-xl space-y-2.5">
+            <div className="flex items-center justify-between text-[#AAB0C6]">
+              <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider">Total de Pessoas</span>
+              <Users className="w-5 h-5 text-[#B387F7]" />
             </div>
             <div>
-              <p className="text-3xl font-black text-slate-950">
+              <p className="text-2xl sm:text-3xl font-black text-white">
                 {data?.totalRespondents ?? 0}
               </p>
-              <p className="text-xs text-slate-500 mt-1">
-                Colaboradores avaliados no sistema
+              <p className="text-[11px] sm:text-xs text-[#AAB0C6] mt-0.5">
+                Colaboradores avaliados no TRIVAX
               </p>
             </div>
-            <div className="pt-2 border-t border-slate-100 text-[11px] text-slate-600 flex justify-between font-medium">
-              <span>Pfizer: <strong className="text-slate-900">{data?.byAffiliation.pfizer ?? 0}</strong></span>
-              <span>Itapevi: <strong className="text-slate-900">{data?.byAffiliation.itapevi ?? 0}</strong></span>
+            <div className="pt-2 sm:pt-3 border-t border-[#2B1C58] text-[11px] text-[#AAB0C6] flex justify-between font-medium">
+              <span>Pfizer: <strong className="text-white">{data?.byAffiliation.pfizer ?? 0}</strong></span>
+              <span>Itapevi: <strong className="text-white">{data?.byAffiliation.itapevi ?? 0}</strong></span>
             </div>
           </div>
 
           {/* ELEGÍVEIS COVID-19 */}
-          <div className="bg-white rounded-3xl border border-slate-200 p-6 shadow-xs space-y-3 hover:border-blue-300 transition">
-            <div className="flex items-center justify-between text-slate-500">
-              <span className="text-xs font-bold uppercase tracking-wider text-blue-700">COVID-19</span>
-              <div className="w-3 h-3 rounded-full bg-blue-600" />
+          <div className="bg-[#120E24] rounded-2xl sm:rounded-3xl border border-[#2B1C58] p-5 sm:p-6 shadow-xl space-y-2.5 hover:border-[#2D67FF]/60 transition">
+            <div className="flex items-center justify-between text-[#AAB0C6]">
+              <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-[#2D67FF]">COVID-19</span>
+              <div className="w-2.5 h-2.5 rounded-full bg-[#2D67FF]" />
             </div>
             <div>
               <div className="flex items-baseline gap-2">
-                <span className="text-3xl font-black text-slate-950">
+                <span className="text-2xl sm:text-3xl font-black text-white">
                   {data?.vaccineStats.COVID_19.count ?? 0}
                 </span>
-                <span className="text-sm font-bold text-blue-600">
+                <span className="text-xs sm:text-sm font-bold text-[#2D67FF]">
                   ({data?.vaccineStats.COVID_19.percentage ?? 0}%)
                 </span>
               </div>
-              <p className="text-xs text-slate-500 mt-1">
-                Elegíveis por comorbidade ou grupo especial
+              <p className="text-[11px] sm:text-xs text-[#AAB0C6] mt-0.5">
+                Comorbidade ou grupo especial
               </p>
             </div>
-            <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+            <div className="w-full bg-[#080612] h-1.5 sm:h-2 rounded-full overflow-hidden border border-[#2B1C58]">
               <div
-                className="bg-blue-600 h-full rounded-full transition-all duration-500"
+                className="bg-[#2D67FF] h-full rounded-full transition-all duration-500"
                 style={{ width: `${data?.vaccineStats.COVID_19.percentage ?? 0}%` }}
               />
             </div>
           </div>
 
           {/* ELEGÍVEIS VSR */}
-          <div className="bg-white rounded-3xl border border-slate-200 p-6 shadow-xs space-y-3 hover:border-purple-300 transition">
-            <div className="flex items-center justify-between text-slate-500">
-              <span className="text-xs font-bold uppercase tracking-wider text-purple-700">VSR</span>
-              <div className="w-3 h-3 rounded-full bg-purple-600" />
+          <div className="bg-[#120E24] rounded-2xl sm:rounded-3xl border border-[#2B1C58] p-5 sm:p-6 shadow-xl space-y-2.5 hover:border-[#7B28E2]/60 transition">
+            <div className="flex items-center justify-between text-[#AAB0C6]">
+              <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-[#B387F7]">VSR</span>
+              <div className="w-2.5 h-2.5 rounded-full bg-[#7B28E2]" />
             </div>
             <div>
               <div className="flex items-baseline gap-2">
-                <span className="text-3xl font-black text-slate-950">
+                <span className="text-2xl sm:text-3xl font-black text-white">
                   {data?.vaccineStats.VSR.count ?? 0}
                 </span>
-                <span className="text-sm font-bold text-purple-600">
+                <span className="text-xs sm:text-sm font-bold text-[#B387F7]">
                   ({data?.vaccineStats.VSR.percentage ?? 0}%)
                 </span>
               </div>
-              <p className="text-xs text-slate-500 mt-1">
-                Gestantes 32-36 sem, ≥75 anos ou 50-74 com risco
+              <p className="text-[11px] sm:text-xs text-[#AAB0C6] mt-0.5">
+                Gestantes 32-36s, ≥75a ou 50-74 com risco
               </p>
             </div>
-            <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+            <div className="w-full bg-[#080612] h-1.5 sm:h-2 rounded-full overflow-hidden border border-[#2B1C58]">
               <div
-                className="bg-purple-600 h-full rounded-full transition-all duration-500"
+                className="bg-[#7B28E2] h-full rounded-full transition-all duration-500"
                 style={{ width: `${data?.vaccineStats.VSR.percentage ?? 0}%` }}
               />
             </div>
           </div>
 
           {/* ELEGÍVEIS PNEUMO 20 */}
-          <div className="bg-white rounded-3xl border border-slate-200 p-6 shadow-xs space-y-3 hover:border-indigo-300 transition">
-            <div className="flex items-center justify-between text-slate-500">
-              <span className="text-xs font-bold uppercase tracking-wider text-indigo-700">Pneumocócica 20</span>
-              <div className="w-3 h-3 rounded-full bg-indigo-600" />
+          <div className="bg-[#120E24] rounded-2xl sm:rounded-3xl border border-[#2B1C58] p-5 sm:p-6 shadow-xl space-y-2.5 hover:border-[#B387F7]/60 transition">
+            <div className="flex items-center justify-between text-[#AAB0C6]">
+              <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-[#B387F7]">Pneumo 20</span>
+              <div className="w-2.5 h-2.5 rounded-full bg-[#B387F7]" />
             </div>
             <div>
               <div className="flex items-baseline gap-2">
-                <span className="text-3xl font-black text-slate-950">
+                <span className="text-2xl sm:text-3xl font-black text-white">
                   {data?.vaccineStats.PNEUMO_20.count ?? 0}
                 </span>
-                <span className="text-sm font-bold text-indigo-600">
+                <span className="text-xs sm:text-sm font-bold text-[#B387F7]">
                   ({data?.vaccineStats.PNEUMO_20.percentage ?? 0}%)
                 </span>
               </div>
-              <p className="text-xs text-slate-500 mt-1">
-                Universal ≥50 anos ou 18-49 com condição de risco
+              <p className="text-[11px] sm:text-xs text-[#AAB0C6] mt-0.5">
+                Universal ≥50a ou 18-49 com risco
               </p>
             </div>
-            <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+            <div className="w-full bg-[#080612] h-1.5 sm:h-2 rounded-full overflow-hidden border border-[#2B1C58]">
               <div
-                className="bg-indigo-600 h-full rounded-full transition-all duration-500"
+                className="bg-gradient-to-r from-[#7B28E2] to-[#2D67FF] h-full rounded-full transition-all duration-500"
                 style={{ width: `${data?.vaccineStats.PNEUMO_20.percentage ?? 0}%` }}
               />
             </div>
           </div>
         </div>
 
-        {/* SEÇÕES DE DETALHAMENTO: FAIXAS ETÁRIAS & TOP COMORBIDADES */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* DISTRIBUIÇÃO POR FAIXA ETÁRIA */}
-          <div className="bg-white rounded-3xl border border-slate-200 p-6 shadow-xs space-y-4">
-            <h3 className="font-extrabold text-slate-950 text-base flex items-center gap-2">
-              <Calendar className="w-4 h-4 text-purple-600" />
-              <span>Distribuição por Faixa Etária</span>
-            </h3>
+        {/* CARD DE CONHECIMENTO PRÉVIO / CONSCIENTIZAÇÃO */}
+        <div className="bg-[#120E24] rounded-2xl sm:rounded-3xl border border-[#7B28E2]/40 p-5 sm:p-8 shadow-xl space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div>
+              <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-widest text-[#B387F7]">
+                Indicador de Conscientização
+              </span>
+              <h3 className="text-base sm:text-xl font-black text-white flex items-center gap-2 mt-0.5">
+                <HelpCircle className="w-5 h-5 text-[#B387F7]" />
+                <span>&quot;Você sabia que estava elegível para essas vacinas?&quot;</span>
+              </h3>
+            </div>
+            <span className="text-xs text-[#AAB0C6] font-semibold bg-[#1A1336] px-3 py-1 rounded-full border border-[#2B1C58] w-fit">
+              Total de respostas: {data?.awarenessStats.totalResponses ?? 0}
+            </span>
+          </div>
 
-            <div className="space-y-3 pt-2">
-              {[
-                { key: '18_49', label: '18 a 49 anos' },
-                { key: '50_59', label: '50 a 59 anos' },
-                { key: '60_74', label: '60 a 74 anos' },
-                { key: '75_plus', label: '75 anos ou mais' },
-              ].map((bracket) => {
-                const count = data?.byAgeBracket[bracket.key] ?? 0;
-                const total = data?.totalRespondents || 1;
-                const pct = Math.round((count / total) * 100);
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+            {/* SIM */}
+            <div className="bg-[#1A1336] p-4 rounded-2xl border border-[#2B1C58] space-y-2">
+              <div className="flex justify-between items-center text-xs text-[#AAB0C6]">
+                <span className="font-bold text-white">Sim, já sabia</span>
+                <span className="text-[#B387F7] font-bold">{data?.awarenessStats.simPercentage ?? 0}%</span>
+              </div>
+              <p className="text-2xl font-black text-white">{data?.awarenessStats.sim ?? 0}</p>
+              <div className="w-full bg-[#080612] h-2 rounded-full overflow-hidden border border-[#2B1C58]">
+                <div
+                  className="bg-gradient-to-r from-[#7B28E2] to-[#2D67FF] h-full rounded-full transition-all duration-500"
+                  style={{ width: `${data?.awarenessStats.simPercentage ?? 0}%` }}
+                />
+              </div>
+            </div>
 
-                return (
-                  <div key={bracket.key} className="space-y-1.5">
-                    <div className="flex justify-between text-xs font-bold text-slate-700">
-                      <span>{bracket.label}</span>
-                      <span>{count} ({pct}%)</span>
+            {/* NÃO */}
+            <div className="bg-[#1A1336] p-4 rounded-2xl border border-[#2B1C58] space-y-2">
+              <div className="flex justify-between items-center text-xs text-[#AAB0C6]">
+                <span className="font-bold text-white">Não sabia</span>
+                <span className="text-[#2D67FF] font-bold">{data?.awarenessStats.naoPercentage ?? 0}%</span>
+              </div>
+              <p className="text-2xl font-black text-white">{data?.awarenessStats.nao ?? 0}</p>
+              <div className="w-full bg-[#080612] h-2 rounded-full overflow-hidden border border-[#2B1C58]">
+                <div
+                  className="bg-[#2D67FF] h-full rounded-full transition-all duration-500"
+                  style={{ width: `${data?.awarenessStats.naoPercentage ?? 0}%` }}
+                />
+              </div>
+            </div>
+
+            {/* PARCIALMENTE */}
+            <div className="bg-[#1A1336] p-4 rounded-2xl border border-[#2B1C58] space-y-2">
+              <div className="flex justify-between items-center text-xs text-[#AAB0C6]">
+                <span className="font-bold text-white">Sabia de algumas</span>
+                <span className="text-[#B387F7] font-bold">{data?.awarenessStats.parcialPercentage ?? 0}%</span>
+              </div>
+              <p className="text-2xl font-black text-white">{data?.awarenessStats.parcial ?? 0}</p>
+              <div className="w-full bg-[#080612] h-2 rounded-full overflow-hidden border border-[#2B1C58]">
+                <div
+                  className="bg-[#B387F7] h-full rounded-full transition-all duration-500"
+                  style={{ width: `${data?.awarenessStats.parcialPercentage ?? 0}%` }}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* SEÇÕES DE DETALHAMENTO */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+          {/* DISTRIBUIÇÃO POR FAIXA ETÁRIA E SEXO */}
+          <div className="bg-[#120E24] rounded-2xl sm:rounded-3xl border border-[#2B1C58] p-5 sm:p-8 shadow-xl space-y-6 flex flex-col justify-between">
+            {/* PARTE SUPERIOR: FAIXA ETÁRIA */}
+            <div className="space-y-3.5">
+              <h3 className="font-extrabold text-white text-sm sm:text-base flex items-center gap-2">
+                <Calendar className="w-4 h-4 text-[#B387F7]" />
+                <span>Distribuição por Faixa Etária</span>
+              </h3>
+
+              <div className="space-y-2.5 pt-1">
+                {[
+                  { key: '18_49', label: '18 a 49 anos' },
+                  { key: '50_59', label: '50 a 59 anos' },
+                  { key: '60_74', label: '60 a 74 anos' },
+                  { key: '75_plus', label: '75 anos ou mais' },
+                ].map((bracket) => {
+                  const count = data?.byAgeBracket[bracket.key] ?? 0;
+                  const total = data?.totalRespondents || 1;
+                  const pct = Math.round((count / total) * 100);
+
+                  return (
+                    <div key={bracket.key} className="space-y-1">
+                      <div className="flex justify-between text-xs font-bold text-[#AAB0C6]">
+                        <span>{bracket.label}</span>
+                        <span className="text-white">{count} ({pct}%)</span>
+                      </div>
+                      <div className="w-full bg-[#080612] h-2 rounded-full overflow-hidden border border-[#2B1C58]">
+                        <div
+                          className="bg-gradient-to-r from-[#2D67FF] to-[#7B28E2] h-full rounded-full transition-all duration-500"
+                          style={{ width: `${pct}%` }}
+                        />
+                      </div>
                     </div>
-                    <div className="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* PARTE INFERIOR: DISTRIBUIÇÃO POR SEXO */}
+            <div className="pt-5 border-t border-[#2B1C58] space-y-3.5">
+              <h3 className="font-extrabold text-white text-sm sm:text-base flex items-center gap-2">
+                <Users className="w-4 h-4 text-[#2D67FF]" />
+                <span>Distribuição por Sexo</span>
+              </h3>
+
+              <div className="space-y-2.5 pt-1">
+                {/* MULHERES */}
+                <div className="space-y-1">
+                  <div className="flex justify-between text-xs font-bold text-[#AAB0C6]">
+                    <span className="flex items-center gap-1.5 text-white">
+                      <span className="w-2 h-2 rounded-full bg-[#7B28E2]" />
+                      Feminino (Mulheres)
+                    </span>
+                    <span className="text-white">
+                      {data?.bySex?.feminino ?? 0} ({data?.bySex?.femininoPercentage ?? 0}%)
+                    </span>
+                  </div>
+                  <div className="w-full bg-[#080612] h-2 rounded-full overflow-hidden border border-[#2B1C58]">
+                    <div
+                      className="bg-gradient-to-r from-[#7B28E2] to-[#B387F7] h-full rounded-full transition-all duration-500"
+                      style={{ width: `${data?.bySex?.femininoPercentage ?? 0}%` }}
+                    />
+                  </div>
+                </div>
+
+                {/* HOMENS */}
+                <div className="space-y-1">
+                  <div className="flex justify-between text-xs font-bold text-[#AAB0C6]">
+                    <span className="flex items-center gap-1.5 text-white">
+                      <span className="w-2 h-2 rounded-full bg-[#2D67FF]" />
+                      Masculino (Homens)
+                    </span>
+                    <span className="text-white">
+                      {data?.bySex?.masculino ?? 0} ({data?.bySex?.masculinoPercentage ?? 0}%)
+                    </span>
+                  </div>
+                  <div className="w-full bg-[#080612] h-2 rounded-full overflow-hidden border border-[#2B1C58]">
+                    <div
+                      className="bg-gradient-to-r from-[#2D67FF] to-[#60A5FA] h-full rounded-full transition-all duration-500"
+                      style={{ width: `${data?.bySex?.masculinoPercentage ?? 0}%` }}
+                    />
+                  </div>
+                </div>
+
+                {/* NÃO INFORMADO */}
+                {(data?.bySex?.naoInformar ?? 0) > 0 && (
+                  <div className="space-y-1">
+                    <div className="flex justify-between text-xs font-bold text-[#AAB0C6]">
+                      <span className="flex items-center gap-1.5 text-[#AAB0C6]">
+                        <span className="w-2 h-2 rounded-full bg-[#AAB0C6]" />
+                        Não informado
+                      </span>
+                      <span className="text-white">
+                        {data?.bySex?.naoInformar ?? 0} ({data?.bySex?.naoInformarPercentage ?? 0}%)
+                      </span>
+                    </div>
+                    <div className="w-full bg-[#080612] h-2 rounded-full overflow-hidden border border-[#2B1C58]">
                       <div
-                        className="bg-gradient-to-r from-blue-600 to-purple-600 h-full rounded-full"
-                        style={{ width: `${pct}%` }}
+                        className="bg-[#AAB0C6] h-full rounded-full transition-all duration-500"
+                        style={{ width: `${data?.bySex?.naoInformarPercentage ?? 0}%` }}
                       />
                     </div>
                   </div>
-                );
-              })}
+                )}
+              </div>
             </div>
           </div>
 
-          {/* TOP CONDIÇÕES / COMORBIDADES MAIS FREQUENTES */}
-          <div className="bg-white rounded-3xl border border-slate-200 p-6 shadow-xs space-y-4">
-            <h3 className="font-extrabold text-slate-950 text-base flex items-center gap-2">
-              <Activity className="w-4 h-4 text-blue-600" />
+          {/* TOP CONDIÇÕES */}
+          <div className="bg-[#120E24] rounded-2xl sm:rounded-3xl border border-[#2B1C58] p-5 sm:p-8 shadow-xl space-y-4">
+            <h3 className="font-extrabold text-white text-sm sm:text-base flex items-center gap-2">
+              <Activity className="w-4 h-4 text-[#2D67FF]" />
               <span>Fatores de Risco Mais Prevalentes</span>
             </h3>
 
             {data?.topConditions && data.topConditions.length > 0 ? (
-              <div className="space-y-3 pt-2">
+              <div className="space-y-3 pt-1">
                 {data.topConditions.map((cond) => (
-                  <div key={cond.name} className="space-y-1.5">
-                    <div className="flex justify-between text-xs font-bold text-slate-700">
-                      <span>{cond.name}</span>
-                      <span>{cond.count} pessoas ({cond.percentage}%)</span>
+                  <div key={cond.name} className="space-y-1">
+                    <div className="flex justify-between text-xs font-bold text-[#AAB0C6]">
+                      <span className="truncate max-w-[200px]">{cond.name}</span>
+                      <span className="text-white shrink-0">{cond.count} ({cond.percentage}%)</span>
                     </div>
-                    <div className="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
+                    <div className="w-full bg-[#080612] h-2 rounded-full overflow-hidden border border-[#2B1C58]">
                       <div
-                        className="bg-purple-600 h-full rounded-full"
+                        className="bg-[#7B28E2] h-full rounded-full"
                         style={{ width: `${cond.percentage}%` }}
                       />
                     </div>
@@ -304,53 +461,54 @@ export default function AdminPage() {
                 ))}
               </div>
             ) : (
-              <div className="p-8 text-center text-xs text-slate-400">
+              <div className="p-6 text-center text-xs text-[#AAB0C6]">
                 Nenhum fator de risco registrado até o momento.
               </div>
             )}
           </div>
         </div>
 
-        {/* TABELA DE SUBMISSÕES RECENTES */}
-        <div className="bg-white rounded-3xl border border-slate-200 shadow-xs overflow-hidden">
-          <div className="p-6 border-b border-slate-100 flex items-center justify-between">
+        {/* TABELA DE SUBMISSÕES RECENTES COM SCROLL MOBILE SUAVE */}
+        <div className="bg-[#120E24] rounded-2xl sm:rounded-3xl border border-[#2B1C58] shadow-xl overflow-hidden">
+          <div className="p-4 sm:p-6 border-b border-[#2B1C58] flex items-center justify-between gap-2">
             <div>
-              <h3 className="font-black text-slate-950 text-base">
-                Últimas Avaliações Realizadas
+              <h3 className="font-black text-white text-sm sm:text-base">
+                Últimas Avaliações
               </h3>
-              <p className="text-xs text-slate-500 mt-0.5">
-                Exibindo os registros salvos anonimamente no sistema.
+              <p className="text-[11px] sm:text-xs text-[#AAB0C6]">
+                Registros salvos anonimamente no sistema TRIVAX.
               </p>
             </div>
-            <span className="text-xs font-bold text-purple-700 bg-purple-50 px-2.5 py-1 rounded-md border border-purple-200">
-              Total: {data?.totalRespondents ?? 0} registros
+            <span className="text-[10px] sm:text-xs font-bold text-[#B387F7] bg-[#1F1545] px-2.5 py-1 rounded-full border border-[#7B28E2]/40 whitespace-nowrap">
+              Total: {data?.totalRespondents ?? 0}
             </span>
           </div>
 
           {data?.recentSubmissions && data.recentSubmissions.length > 0 ? (
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs text-slate-700">
-                <thead className="bg-slate-900 text-slate-200 uppercase tracking-wider font-bold">
+              <table className="w-full text-left text-xs text-[#F2F3F7] min-w-[650px]">
+                <thead className="bg-[#0D091D] text-[#AAB0C6] uppercase tracking-wider font-bold border-b border-[#2B1C58]">
                   <tr>
-                    <th className="py-3.5 px-4">Data / Hora</th>
-                    <th className="py-3.5 px-4">Unidade</th>
-                    <th className="py-3.5 px-4">Faixa Etária</th>
-                    <th className="py-3.5 px-4">Sexo</th>
-                    <th className="py-3.5 px-4">Vacinas Indicadas</th>
+                    <th className="py-3 px-3 sm:px-4">Data/Hora</th>
+                    <th className="py-3 px-3 sm:px-4">Unidade</th>
+                    <th className="py-3 px-3 sm:px-4">Faixa Etária</th>
+                    <th className="py-3 px-3 sm:px-4">Sexo</th>
+                    <th className="py-3 px-3 sm:px-4">Vacinas Indicadas</th>
+                    <th className="py-3 px-3 sm:px-4">Sabia da Elegibilidade?</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
+                <tbody className="divide-y divide-[#2B1C58]/60">
                   {data.recentSubmissions.map((sub) => {
                     const dateFormatted = new Date(sub.timestamp).toLocaleString('pt-BR');
                     return (
-                      <tr key={sub.id} className="hover:bg-purple-50/30 transition">
-                        <td className="py-3 px-4 font-mono text-slate-500">
+                      <tr key={sub.id} className="hover:bg-[#1A1336]/60 transition">
+                        <td className="py-2.5 sm:py-3 px-3 sm:px-4 font-mono text-[#AAB0C6] text-[11px]">
                           {dateFormatted}
                         </td>
-                        <td className="py-3 px-4 font-semibold text-slate-900">
-                          {sub.user_affiliation === 'PFIZER' ? 'Colega Pfizer' : 'Itapevi'}
+                        <td className="py-2.5 sm:py-3 px-3 sm:px-4 font-semibold text-white">
+                          {sub.user_affiliation === 'PFIZER' ? 'Pfizer' : 'Itapevi'}
                         </td>
-                        <td className="py-3 px-4">
+                        <td className="py-2.5 sm:py-3 px-3 sm:px-4 text-[#AAB0C6]">
                           {sub.age_bracket === '18_49'
                             ? '18 a 49 anos'
                             : sub.age_bracket === '50_59'
@@ -359,25 +517,25 @@ export default function AdminPage() {
                             ? '60 a 74 anos'
                             : '75 anos ou mais'}
                         </td>
-                        <td className="py-3 px-4">
+                        <td className="py-2.5 sm:py-3 px-3 sm:px-4 text-[#AAB0C6]">
                           {sub.sex === 'FEMININO'
                             ? 'Feminino'
                             : sub.sex === 'MASCULINO'
                             ? 'Masculino'
                             : 'Não informado'}
                         </td>
-                        <td className="py-3 px-4">
-                          <div className="flex gap-1.5 flex-wrap">
+                        <td className="py-2.5 sm:py-3 px-3 sm:px-4">
+                          <div className="flex gap-1 flex-wrap">
                             {sub.vaccines.length > 0 ? (
                               sub.vaccines.map((v) => (
                                 <span
                                   key={v}
-                                  className={`px-2.5 py-0.5 rounded-md font-bold text-[10px] ${
+                                  className={`px-2 py-0.5 rounded-full font-bold text-[9px] ${
                                     v === 'COVID_19'
-                                      ? 'bg-blue-100 text-blue-900 border border-blue-200'
+                                      ? 'bg-[#2D67FF]/20 text-[#2D67FF] border border-[#2D67FF]/40'
                                       : v === 'VSR'
-                                      ? 'bg-purple-100 text-purple-900 border border-purple-200'
-                                      : 'bg-indigo-100 text-indigo-900 border border-indigo-200'
+                                      ? 'bg-[#7B28E2]/20 text-[#B387F7] border border-[#7B28E2]/40'
+                                      : 'bg-[#B387F7]/20 text-[#B387F7] border border-[#B387F7]/40'
                                   }`}
                                 >
                                   {v === 'COVID_19'
@@ -388,9 +546,30 @@ export default function AdminPage() {
                                 </span>
                               ))
                             ) : (
-                              <span className="text-slate-400 italic">Nenhuma</span>
+                              <span className="text-[#AAB0C6] italic text-[11px]">Nenhuma</span>
                             )}
                           </div>
+                        </td>
+                        <td className="py-2.5 sm:py-3 px-3 sm:px-4">
+                          {sub.awareness_feedback === 'SIM' ? (
+                            <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-400 bg-emerald-950/60 px-2.5 py-0.5 rounded-full border border-emerald-800/60">
+                              <CheckCircle2 className="w-3 h-3" />
+                              Sim, já sabia
+                            </span>
+                          ) : sub.awareness_feedback === 'NAO' ? (
+                            <span className="inline-flex items-center gap-1 text-[10px] font-bold text-rose-400 bg-rose-950/60 px-2.5 py-0.5 rounded-full border border-rose-800/60">
+                              <AlertCircle className="w-3 h-3" />
+                              Não sabia
+                            </span>
+                          ) : sub.awareness_feedback === 'PARCIAL' ? (
+                            <span className="inline-flex items-center gap-1 text-[10px] font-bold text-[#B387F7] bg-[#1F1545] px-2.5 py-0.5 rounded-full border border-[#7B28E2]/40">
+                              Sabia de algumas
+                            </span>
+                          ) : (
+                            <span className="text-[#AAB0C6]/60 italic text-[10px]">
+                              Pendente
+                            </span>
+                          )}
                         </td>
                       </tr>
                     );
@@ -399,8 +578,8 @@ export default function AdminPage() {
               </table>
             </div>
           ) : (
-            <div className="p-12 text-center text-sm text-slate-400">
-              Nenhuma avaliação registrada ainda. Complete o questionário para ver os dados refletidos aqui em tempo real!
+            <div className="p-8 text-center text-xs text-[#AAB0C6]">
+              Nenhuma avaliação registrada ainda. Complete o questionário para ver os dados aqui!
             </div>
           )}
         </div>

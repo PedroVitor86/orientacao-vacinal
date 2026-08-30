@@ -11,12 +11,12 @@ export const QUESTIONNAIRE_SECTIONS: QuestionSection[] = [
       {
         id: 'q-affiliation',
         fact_key: 'user_affiliation',
-        label: 'Colega Pfizer ou Itapevi?',
+        label: 'Pfizer ou Itapevi?',
         help_text: 'Selecione a opção correspondente.',
         type: 'radio',
         required: true,
         options: [
-          { label: 'Colega Pfizer', value: 'PFIZER' },
+          { label: 'Pfizer', value: 'PFIZER' },
           { label: 'Itapevi', value: 'ITAPEVI' },
         ],
       },
@@ -57,8 +57,8 @@ export const QUESTIONNAIRE_SECTIONS: QuestionSection[] = [
     icon: 'HeartHandshake',
     visibility_condition: {
       fact: 'sex',
-      operator: 'equal',
-      value: 'FEMININO',
+      operator: 'in',
+      value: ['FEMININO', 'NAO_INFORMAR'],
     },
     questions: [
       {
@@ -207,7 +207,7 @@ export const QUESTIONNAIRE_SECTIONS: QuestionSection[] = [
         items: [
           { fact_key: 'has_stroke_sequelae', label: 'AVC com sequelas' },
           { fact_key: 'has_multiple_sclerosis', label: 'Esclerose múltipla' },
-          { fact_key: 'has_als', label: 'ELA' },
+          { fact_key: 'has_als', label: 'ELA - Esclerose Lateral Amiotrófica' },
           { fact_key: 'has_muscular_dystrophy', label: 'Distrofia muscular' },
           { fact_key: 'has_cerebral_palsy', label: 'Paralisia cerebral' },
           { fact_key: 'has_other_neurological', label: 'Outra doença neurológica crônica' },

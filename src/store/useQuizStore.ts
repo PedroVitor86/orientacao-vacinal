@@ -7,6 +7,8 @@ interface QuizState {
   facts: Record<string, any>;
   currentStepIndex: number;
   results: EvaluationResult[] | null;
+  lastSubmissionId: string | null;
+  awarenessFeedback: string | null;
   
   // Ações
   setFact: (key: string, value: any) => void;
@@ -16,6 +18,8 @@ interface QuizState {
   setMultiCheckboxItem: (factKey: string, checked: boolean, noneKey?: string) => void;
   setNoneSelected: (noneKey: string, itemKeys: string[]) => void;
   setResults: (results: EvaluationResult[]) => void;
+  setLastSubmissionId: (id: string | null) => void;
+  setAwarenessFeedback: (feedback: string | null) => void;
   goToNextStep: () => boolean; // retorna true se completou
   goToPrevStep: () => void;
   resetQuiz: () => void;
@@ -33,6 +37,9 @@ function checkVisibility(condition: any, facts: Record<string, any>): boolean {
   if (condition.operator === 'equal') return factValue === condition.value;
   if (condition.operator === 'notEqual') return factValue !== condition.value;
   if (condition.operator === 'greaterThanInclusive') return Number(factValue) >= Number(condition.value);
+  if (condition.operator === 'in') {
+    return Array.isArray(condition.value) ? condition.value.includes(factValue) : false;
+  }
   return true;
 }
 
@@ -42,13 +49,15 @@ export const useQuizStore = create<QuizState>()(
       facts: {},
       currentStepIndex: 0,
       results: null,
+      lastSubmissionId: null,
+      awarenessFeedback: null,
 
       setFact: (key, value) => {
         set((state) => {
           const updated = { ...state.facts, [key]: value };
           
-          // Se o sexo mudar e não for Feminino, limpa fatos de gestação
-          if (key === 'sex' && value !== 'FEMININO') {
+          // Se o sexo mudar para Masculino, limpa fatos de gestação
+          if (key === 'sex' && value === 'MASCULINO') {
             delete updated.is_pregnant;
             delete updated.pregnancy_weeks_32_36;
             delete updated.is_postpartum;
@@ -63,37 +72,44 @@ export const useQuizStore = create<QuizState>()(
         });
       },
 
+      toggleFact: (key) => {
+        const current = !!get().facts[key];
+        get().setFact(key, !current);
+      },
+
       setAgeBracket: (bracket) => {
-        let mappedAge = 30;
-        if (bracket === '18_49') mappedAge = 30;
-        else if (bracket === '50_59') mappedAge = 55;
-        else if (bracket === '60_74') mappedAge = 65;
-        else if (bracket === '75_plus') mappedAge = 75;
+        let numericAge = 30;
+        if (bracket === '18_49') numericAge = 30;
+        if (bracket === '50_59') numericAge = 55;
+        if (bracket === '60_74') numericAge = 65;
+        if (bracket === '75_plus') numericAge = 75;
 
         set((state) => ({
           facts: {
             ...state.facts,
             age_bracket: bracket,
-            age: mappedAge,
+            age: numericAge,
           },
         }));
       },
 
       setObesitySelection: (value) => {
-        set((state) => ({
-          facts: {
-            ...state.facts,
-            morbid_obesity_selection: value,
-            has_morbid_obesity_bmi_40: value === 'SIM',
-          },
-        }));
+        set((state) => {
+          const updated: Record<string, any> = { ...state.facts, morbid_obesity_selection: value };
+          if (value === 'SIM') {
+            updated.has_morbid_obesity_bmi_40 = true;
+          } else {
+            updated.has_morbid_obesity_bmi_40 = false;
+          }
+          return { facts: updated };
+        });
       },
 
       setMultiCheckboxItem: (factKey, checked, noneKey) => {
         set((state) => {
           const updated = { ...state.facts, [factKey]: checked };
           if (checked && noneKey) {
-            updated[noneKey] = false;
+            delete updated[noneKey]; // desmarca o "nenhuma das opções"
           }
           return { facts: updated };
         });
@@ -101,24 +117,23 @@ export const useQuizStore = create<QuizState>()(
 
       setNoneSelected: (noneKey, itemKeys) => {
         set((state) => {
-          const updated = { ...state.facts, [noneKey]: true };
-          for (const key of itemKeys) {
-            updated[key] = false;
+          const current = !!state.facts[noneKey];
+          const nextVal = !current;
+          const updated = { ...state.facts, [noneKey]: nextVal };
+
+          if (nextVal) {
+            // Se marcou "Nenhuma das opções", desmarca todos os itens do grupo
+            for (const key of itemKeys) {
+              delete updated[key];
+            }
           }
           return { facts: updated };
         });
       },
 
-      toggleFact: (key) => {
-        set((state) => ({
-          facts: {
-            ...state.facts,
-            [key]: !state.facts[key],
-          },
-        }));
-      },
-
       setResults: (results) => set({ results }),
+      setLastSubmissionId: (id) => set({ lastSubmissionId: id }),
+      setAwarenessFeedback: (feedback) => set({ awarenessFeedback: feedback }),
 
       getVisibleSections: () => {
         const { facts } = get();
@@ -145,27 +160,27 @@ export const useQuizStore = create<QuizState>()(
 
       getProgressPercentage: () => {
         const visible = get().getVisibleSections();
-        if (visible.length === 0) return 0;
+        const total = visible.length;
+        if (total === 0) return 0;
         const safeIndex = get().getSafeStepIndex();
-        return Math.round(((safeIndex + 1) / visible.length) * 100);
+        return Math.round(((safeIndex + 1) / total) * 100);
       },
 
       goToNextStep: () => {
         const visible = get().getVisibleSections();
-        const safeIndex = get().getSafeStepIndex();
-        const nextIndex = safeIndex + 1;
-        if (nextIndex >= visible.length) {
-          return true; // Chegou ao fim
+        const current = get().getSafeStepIndex();
+        if (current < visible.length - 1) {
+          set({ currentStepIndex: current + 1 });
+          return false;
         }
-        set({ currentStepIndex: nextIndex });
-        return false;
+        return true;
       },
 
       goToPrevStep: () => {
-        const safeIndex = get().getSafeStepIndex();
-        set({
-          currentStepIndex: Math.max(0, safeIndex - 1),
-        });
+        const current = get().getSafeStepIndex();
+        if (current > 0) {
+          set({ currentStepIndex: current - 1 });
+        }
       },
 
       resetQuiz: () => {
@@ -173,11 +188,13 @@ export const useQuizStore = create<QuizState>()(
           facts: {},
           currentStepIndex: 0,
           results: null,
+          lastSubmissionId: null,
+          awarenessFeedback: null,
         });
       },
     }),
     {
-      name: 'vacina-adulto-quiz-v2', // Nova versão limpa o cache antigo
+      name: 'trivax-quiz-store-v3',
     }
   )
 );

@@ -36,21 +36,21 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
   };
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 shadow-xs hover:border-purple-300 transition space-y-4">
+    <div className="bg-[#120E24]/90 rounded-2xl sm:rounded-3xl border border-[#2B1C58] p-4 sm:p-7 shadow-xl hover:border-[#7B28E2]/50 transition duration-200 space-y-3.5 sm:space-y-4">
       {/* CABEÇALHO DA PERGUNTA */}
       <div className="space-y-1">
         {question.subtitle && (
-          <span className="inline-block text-xs font-bold uppercase tracking-wider text-purple-700 bg-purple-50 border border-purple-200/80 px-2.5 py-0.5 rounded-md">
+          <span className="inline-block text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[#B387F7] bg-[#1F1545] border border-[#7B28E2]/30 px-2.5 py-0.5 rounded-full mb-1">
             {question.subtitle}
           </span>
         )}
-        <h3 className="text-base sm:text-lg font-bold text-slate-950 leading-snug">
+        <h3 className="text-sm sm:text-lg font-extrabold text-white leading-snug">
           {renderNumberPrefix()}
           {question.label}
-          {question.required && <span className="text-purple-600 text-xs ml-1">*</span>}
+          {question.required && <span className="text-[#B387F7] text-xs ml-1">*</span>}
         </h3>
         {question.help_text && (
-          <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+          <p className="text-[11px] sm:text-xs text-[#AAB0C6] leading-relaxed">
             {question.help_text}
           </p>
         )}
@@ -59,7 +59,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
       {/* TIPO: RADIO (Ex: Colega Pfizer/Itapevi, Idade em faixas, Sexo, IMC) */}
       {question.type === 'radio' && question.options && (
         <div
-          className={`grid gap-2.5 ${
+          className={`grid gap-2 sm:gap-3 ${
             question.options.length <= 2
               ? 'grid-cols-1 sm:grid-cols-2'
               : question.options.length <= 3
@@ -82,30 +82,30 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
                     onFactChange(question.fact_key, opt.value);
                   }
                 }}
-                className={`px-4 py-3 rounded-xl border text-sm font-semibold text-left transition flex items-center justify-between cursor-pointer ${
+                className={`min-h-[46px] px-3.5 py-2.5 sm:px-4 sm:py-3.5 rounded-xl sm:rounded-2xl border text-xs sm:text-sm font-semibold text-left transition duration-200 flex items-center justify-between cursor-pointer active:scale-[0.99] ${
                   isSelected
-                    ? 'bg-purple-50/80 border-purple-600 text-purple-950 ring-2 ring-purple-500/25 shadow-xs'
-                    : 'border-slate-200 hover:bg-slate-50 text-slate-700 hover:border-slate-300'
+                    ? 'bg-[#24174D] border-[#7B28E2] text-white ring-2 ring-[#7B28E2]/40 shadow-lg shadow-[#7B28E2]/20'
+                    : 'bg-[#1A1336]/80 border-[#2B1C58] hover:bg-[#201844] text-[#F2F3F7] hover:border-[#7B28E2]/40'
                 }`}
               >
-                <span>{opt.label}</span>
-                {isSelected && <Check className="w-4 h-4 text-purple-600 shrink-0" />}
+                <span className="leading-snug">{opt.label}</span>
+                {isSelected && <Check className="w-4 h-4 text-[#B387F7] shrink-0 ml-2" />}
               </button>
             );
           })}
         </div>
       )}
 
-      {/* TIPO: BOTÕES BOOLEANOS (Sim / Não) */}
+      {/* TIPO: BOTÕES BOOLEANOS (Sim / Não) - Otimizado para Toque no Celular */}
       {question.type === 'boolean_buttons' && question.fact_key && (
-        <div className="flex gap-3">
+        <div className="grid grid-cols-2 sm:flex gap-2.5 sm:gap-3">
           <button
             type="button"
             onClick={() => onFactChange(question.fact_key!, true)}
-            className={`flex-1 sm:flex-none sm:w-32 py-2.5 px-5 rounded-xl border text-sm font-bold transition cursor-pointer text-center ${
+            className={`min-h-[44px] sm:w-32 py-2.5 sm:py-3 px-4 rounded-xl sm:rounded-2xl border text-xs sm:text-sm font-bold transition cursor-pointer text-center active:scale-[0.98] ${
               currentValue === true
-                ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white border-transparent shadow-xs shadow-purple-500/25'
-                : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
+                ? 'bg-gradient-to-r from-[#7B28E2] to-[#2D67FF] text-white border-transparent shadow-lg shadow-[#7B28E2]/30'
+                : 'bg-[#1A1336] text-[#AAB0C6] border-[#2B1C58] hover:text-white hover:bg-[#201844]'
             }`}
           >
             Sim
@@ -113,10 +113,10 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
           <button
             type="button"
             onClick={() => onFactChange(question.fact_key!, false)}
-            className={`flex-1 sm:flex-none sm:w-32 py-2.5 px-5 rounded-xl border text-sm font-bold transition cursor-pointer text-center ${
+            className={`min-h-[44px] sm:w-32 py-2.5 sm:py-3 px-4 rounded-xl sm:rounded-2xl border text-xs sm:text-sm font-bold transition cursor-pointer text-center active:scale-[0.98] ${
               currentValue === false
-                ? 'bg-slate-950 text-white border-slate-950 shadow-xs'
-                : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
+                ? 'bg-[#24174D] text-white border-[#7B28E2] shadow-sm'
+                : 'bg-[#1A1336] text-[#AAB0C6] border-[#2B1C58] hover:text-white hover:bg-[#201844]'
             }`}
           >
             Não
@@ -126,17 +126,17 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
 
       {/* TIPO: MULTI CHECKBOX GROUP (Com Nenhuma das opções) */}
       {question.type === 'multi_checkbox_group' && question.items && (
-        <div className="space-y-2 pt-1">
-          <div className="grid grid-cols-1 gap-2">
+        <div className="space-y-2 pt-0.5">
+          <div className="grid grid-cols-1 gap-2 sm:gap-2.5">
             {question.items.map((item) => {
               const isChecked = !!facts[item.fact_key];
               return (
                 <label
                   key={item.fact_key}
-                  className={`flex items-center gap-3 p-3 rounded-xl border transition cursor-pointer select-none ${
+                  className={`flex items-center gap-3 p-3 sm:p-3.5 rounded-xl sm:rounded-2xl border transition cursor-pointer select-none active:scale-[0.99] ${
                     isChecked
-                      ? 'bg-purple-50/70 border-purple-400 text-purple-950 ring-1 ring-purple-400/20'
-                      : 'border-slate-200 hover:bg-slate-50 text-slate-700'
+                      ? 'bg-[#24174D] border-[#7B28E2] text-white ring-1 ring-[#7B28E2]/40 shadow-sm'
+                      : 'bg-[#1A1336]/80 border-[#2B1C58] hover:bg-[#201844] text-[#F2F3F7] hover:border-[#7B28E2]/30'
                   }`}
                 >
                   <input
@@ -149,9 +149,9 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
                         onFactChange(item.fact_key, e.target.checked);
                       }
                     }}
-                    className="w-4 h-4 rounded text-purple-600 focus:ring-purple-500 border-slate-300 transition"
+                    className="w-4 h-4 rounded text-[#7B28E2] focus:ring-[#7B28E2] border-[#2B1C58] bg-[#080612] shrink-0 transition"
                   />
-                  <span className="text-sm font-medium leading-snug">{item.label}</span>
+                  <span className="text-xs sm:text-sm font-medium leading-snug">{item.label}</span>
                 </label>
               );
             })}
@@ -159,10 +159,10 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
             {/* OPÇÃO "NENHUMA DAS OPÇÕES" */}
             {question.none_key && (
               <label
-                className={`flex items-center gap-3 p-3 rounded-xl border transition cursor-pointer select-none ${
+                className={`flex items-center gap-3 p-3 sm:p-3.5 rounded-xl sm:rounded-2xl border transition cursor-pointer select-none active:scale-[0.99] ${
                   facts[question.none_key]
-                    ? 'bg-slate-900 border-slate-900 text-white font-semibold'
-                    : 'border-slate-200 hover:bg-slate-50 text-slate-500 italic'
+                    ? 'bg-[#0D091D] border-[#7B28E2]/60 text-white font-bold'
+                    : 'bg-[#0F0A21]/60 border-[#2B1C58] hover:bg-[#1A1336] text-[#AAB0C6] italic'
                 }`}
               >
                 <input
@@ -174,9 +174,9 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
                       onNoneChange(question.none_key!, allKeys);
                     }
                   }}
-                  className="w-4 h-4 rounded text-purple-500 focus:ring-purple-500 border-slate-400 transition"
+                  className="w-4 h-4 rounded text-[#B387F7] focus:ring-[#7B28E2] border-[#2B1C58] bg-[#080612] shrink-0 transition"
                 />
-                <span className="text-sm">Nenhuma das opções</span>
+                <span className="text-xs sm:text-sm">Nenhuma das opções</span>
               </label>
             )}
           </div>

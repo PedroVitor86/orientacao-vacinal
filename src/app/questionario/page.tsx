@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, ArrowRight, CheckCircle, AlertCircle } from 'lucide-react';
+import { ArrowLeft, ArrowRight, CheckCircle, AlertCircle, Sparkles } from 'lucide-react';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { QuestionCard } from '@/components/QuestionCard';
@@ -30,6 +30,7 @@ export default function QuestionnairePage() {
     getProgressPercentage,
     getSafeStepIndex,
     setResults,
+    setLastSubmissionId,
   } = useQuizStore();
 
   const [validationError, setValidationError] = useState<string | null>(null);
@@ -46,12 +47,8 @@ export default function QuestionnairePage() {
   const progress = getProgressPercentage();
   const isLastStep = safeIndex === visibleSections.length - 1;
 
-  if (!isClient || !currentSection) {
-    return null;
-  }
-
-  // Gera a numeração sequencial contínua (1, 2, 3, 4...) de acordo com as perguntas efetivamente exibidas
-  const getQuestionNumberMap = () => {
+  // Numeração 100% contínua e sequencial calculada dinamicamente
+  const questionNumberMap = useMemo(() => {
     const map: Record<string, number | null> = {};
     let counter = 0;
 
@@ -76,9 +73,11 @@ export default function QuestionnairePage() {
     }
 
     return map;
-  };
+  }, [visibleSections, facts]);
 
-  const questionNumberMap = getQuestionNumberMap();
+  if (!isClient || !currentSection) {
+    return null;
+  }
 
   const handleNext = async () => {
     setValidationError(null);
@@ -86,7 +85,7 @@ export default function QuestionnairePage() {
     // Validação da Etapa de Identificação Inicial
     if (currentSection.id === 'sec-identificacao') {
       if (!facts.user_affiliation) {
-        setValidationError('Por favor, informe se você é Colega Pfizer ou Itapevi.');
+        setValidationError('Por favor, selecione se você é da Pfizer ou Itapevi.');
         return;
       }
       if (!facts.age_bracket) {
@@ -108,7 +107,7 @@ export default function QuestionnairePage() {
 
         // Grava no banco analítico para o relatório do Admin
         try {
-          await fetch('/api/submissions', {
+          const res = await fetch('/api/submissions', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -116,8 +115,14 @@ export default function QuestionnairePage() {
               eligible_results: eligibleOnly,
             }),
           });
+          if (res.ok) {
+            const resJson = await res.json();
+            if (resJson?.id) {
+              setLastSubmissionId(resJson.id);
+            }
+          }
         } catch (saveErr) {
-          console.warn('Registro de estatística offline:', saveErr);
+          console.warn('Registro analítico offline:', saveErr);
         }
 
         router.push('/resultado');
@@ -139,21 +144,27 @@ export default function QuestionnairePage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50">
+    <div className="min-h-screen flex flex-col bg-[#080612] text-[#F2F3F7] relative overflow-x-hidden selection:bg-[#7B28E2] selection:text-white">
+      {/* GLOW DE FUNDO */}
+      <div className="absolute top-10 left-1/2 -translate-x-1/2 w-[320px] sm:w-[700px] h-[250px] sm:h-[350px] bg-gradient-to-tr from-[#7B28E2]/20 to-[#2D67FF]/20 blur-[100px] sm:blur-[130px] pointer-events-none -z-10" />
+
       <Navbar showReset={true} onReset={resetQuiz} />
 
-      <main className="flex-1 max-w-3xl w-full mx-auto px-4 py-6 sm:py-10 space-y-6">
-        {/* BARRA DE PROGRESSO COM GRADIENTE AZUL E ROXO */}
-        <div className="space-y-2">
-          <div className="flex justify-between items-center text-xs font-semibold text-slate-600">
-            <span>
-              Etapa {safeIndex + 1} de {visibleSections.length}
+      <main className="flex-1 max-w-3xl w-full mx-auto px-3.5 sm:px-6 py-5 sm:py-10 space-y-4 sm:space-y-6">
+        {/* BARRA DE PROGRESSO TRIVAX */}
+        <div className="space-y-2 bg-[#120E24]/70 border border-[#2B1C58] p-3 sm:p-4 rounded-2xl backdrop-blur-md">
+          <div className="flex justify-between items-center text-[11px] sm:text-xs font-semibold text-[#AAB0C6]">
+            <span className="flex items-center gap-1.5">
+              <Sparkles className="w-3.5 h-3.5 text-[#B387F7]" />
+              <span>
+                Etapa {safeIndex + 1} de {visibleSections.length}
+              </span>
             </span>
-            <span className="text-purple-700 font-bold">{progress}% concluído</span>
+            <span className="text-[#B387F7] font-bold">{progress}% concluído</span>
           </div>
-          <div className="w-full h-2.5 bg-slate-200 rounded-full overflow-hidden">
+          <div className="w-full h-2 sm:h-2.5 bg-[#080612] rounded-full overflow-hidden p-0.5 border border-[#2B1C58]">
             <div
-              className="h-full bg-gradient-to-r from-blue-600 to-purple-600 transition-all duration-300 ease-out rounded-full shadow-xs"
+              className="h-full bg-gradient-to-r from-[#2D67FF] via-[#7B28E2] to-[#B387F7] transition-all duration-500 ease-out rounded-full shadow-md shadow-[#7B28E2]/50"
               style={{ width: `${progress}%` }}
             />
           </div>
@@ -161,28 +172,27 @@ export default function QuestionnairePage() {
 
         {/* ALERTA DE ERRO DE VALIDAÇÃO */}
         {validationError && (
-          <div className="p-4 bg-purple-50 border border-purple-200 rounded-xl flex items-start gap-3 text-purple-900 text-sm animate-fadeIn">
-            <AlertCircle className="w-5 h-5 text-purple-600 shrink-0 mt-0.5" />
-            <span>{validationError}</span>
+          <div className="p-3.5 sm:p-4 bg-[#2A1135] border border-[#7B28E2] rounded-2xl flex items-start gap-2.5 sm:gap-3 text-[#F2F3F7] text-xs sm:text-sm animate-fadeIn shadow-lg">
+            <AlertCircle className="w-4 h-4 sm:w-5 sm:h-5 text-[#B387F7] shrink-0 mt-0.5" />
+            <span className="leading-snug">{validationError}</span>
           </div>
         )}
 
         {/* CABEÇALHO DA SEÇÃO ATUAL */}
-        <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs space-y-1.5">
-          <h2 className="text-2xl font-black text-slate-950 leading-snug">
+        <div className="bg-[#120E24] rounded-2xl sm:rounded-3xl border border-[#2B1C58] p-4 sm:p-7 shadow-xl space-y-1.5">
+          <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-white leading-tight">
             {currentSection.title}
           </h2>
           {currentSection.description && (
-            <p className="text-sm text-slate-600 leading-relaxed">
+            <p className="text-xs sm:text-sm text-[#AAB0C6] leading-relaxed">
               {currentSection.description}
             </p>
           )}
         </div>
 
-        {/* PERGUNTAS DA SEÇÃO COM NUMERAÇÃO SEQUENCIAL CONTÍNUA */}
-        <div className="space-y-4">
+        {/* PERGUNTAS DA SEÇÃO */}
+        <div className="space-y-3.5 sm:space-y-4">
           {currentSection.questions.map((q) => {
-            // Se tiver visibilidade condicional na pergunta individual
             if (
               q.visibility_condition &&
               facts[q.visibility_condition.fact] !== q.visibility_condition.value
@@ -206,16 +216,16 @@ export default function QuestionnairePage() {
           })}
         </div>
 
-        {/* NAVEGAÇÃO ENTRE PASSOS */}
-        <div className="flex items-center justify-between gap-4 pt-4 border-t border-slate-200">
+        {/* NAVEGAÇÃO ENTRE PASSOS (Otimizado para Celular) */}
+        <div className="grid grid-cols-2 sm:flex sm:items-center sm:justify-between gap-2.5 sm:gap-4 pt-3 sm:pt-4 border-t border-[#2B1C58]">
           <button
             type="button"
             onClick={handlePrev}
             disabled={safeIndex === 0}
-            className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border text-sm font-semibold transition cursor-pointer ${
+            className={`min-h-[46px] inline-flex items-center justify-center gap-1.5 sm:gap-2 px-4 sm:px-6 py-2.5 sm:py-3 rounded-full border text-xs sm:text-sm font-semibold transition cursor-pointer active:scale-98 ${
               safeIndex === 0
-                ? 'opacity-40 cursor-not-allowed border-slate-200 text-slate-400 bg-transparent'
-                : 'border-slate-300 text-slate-700 bg-white hover:bg-slate-100 shadow-xs'
+                ? 'opacity-30 cursor-not-allowed border-[#2B1C58] text-[#AAB0C6] bg-transparent'
+                : 'border-[#2B1C58] text-[#F2F3F7] bg-[#120E24] hover:bg-[#201844] hover:border-[#7B28E2]/50 shadow-md'
             }`}
           >
             <ArrowLeft className="w-4 h-4" />
@@ -226,17 +236,17 @@ export default function QuestionnairePage() {
             type="button"
             onClick={handleNext}
             disabled={isSubmitting}
-            className="inline-flex items-center gap-2 px-7 py-3 rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white text-sm font-bold hover:opacity-95 transition shadow-md shadow-purple-500/25 cursor-pointer"
+            className="min-h-[46px] inline-flex items-center justify-center gap-1.5 sm:gap-2 px-4 sm:px-8 py-2.5 sm:py-3.5 rounded-full bg-gradient-to-r from-[#7B28E2] via-[#5F30EB] to-[#2D67FF] text-white text-xs sm:text-sm font-bold hover:opacity-90 transition shadow-xl shadow-[#7B28E2]/40 cursor-pointer active:scale-98 text-center"
           >
             {isLastStep ? (
               <>
-                <CheckCircle className="w-4 h-4" />
-                <span>{isSubmitting ? 'Processando...' : 'Ver Minhas Orientações'}</span>
+                <CheckCircle className="w-4 h-4 shrink-0" />
+                <span className="truncate">{isSubmitting ? 'Processando...' : 'Ver Orientações'}</span>
               </>
             ) : (
               <>
                 <span>Avançar</span>
-                <ArrowRight className="w-4 h-4" />
+                <ArrowRight className="w-4 h-4 shrink-0" />
               </>
             )}
           </button>
