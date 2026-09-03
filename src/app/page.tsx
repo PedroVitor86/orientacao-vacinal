@@ -24,10 +24,6 @@ export default function HomePage() {
   const router = useRouter();
   const { resetQuiz } = useQuizStore();
 
-  useEffect(() => {
-    resetQuiz();
-  }, [resetQuiz]);
-
   const handleStart = () => {
     resetQuiz();
     router.push('/questionario');

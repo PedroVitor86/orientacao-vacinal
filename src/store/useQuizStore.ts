@@ -208,7 +208,7 @@ export const useQuizStore = create<QuizState>()(
       },
     }),
     {
-      name: 'trivax-quiz-store-v3',
+      name: 'trivax-quiz-store-v5',
     }
   )
 );

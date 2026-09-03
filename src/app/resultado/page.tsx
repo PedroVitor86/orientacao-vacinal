@@ -20,7 +20,8 @@ import {
   ExternalLink,
   MapPin,
   Info,
-  Home
+  Home,
+  Clock
 } from 'lucide-react';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
@@ -50,21 +51,42 @@ export default function ResultadoPage() {
   const [feedbackSaved, setFeedbackSaved] = useState(false);
   const [cardUpdatedFeedbackSaved, setCardUpdatedFeedbackSaved] = useState(false);
   const [isClient, setIsClient] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(90);
+  const [isPaused, setIsPaused] = useState(false);
+
+  const handleFinishAndHome = () => {
+    resetQuiz();
+    router.push('/');
+  };
+
+  useEffect(() => {
+    if (isPaused) return;
+
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          resetQuiz();
+          router.push('/');
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [isPaused, resetQuiz, router]);
 
   useEffect(() => {
     setIsClient(true);
-    if (!facts.age_bracket && !facts.age) {
-      router.push('/questionario');
-      return;
-    }
 
-    if (!results) {
+    if (!results && (facts.age_bracket || facts.age)) {
       const evalRes = defaultRuleEngine.evaluate(rules, facts);
       setResults(evalRes.filter((r) => r.is_eligible));
     }
-  }, [facts, results, router, setResults]);
+  }, [facts, results, setResults]);
 
-  if (!isClient || (!facts.age_bracket && !facts.age)) {
+  if (!isClient) {
     return null;
   }
 
@@ -225,6 +247,37 @@ export default function ResultadoPage() {
                 <span>{copied ? 'Copiado!' : 'Compartilhar'}</span>
               </button>
             </div>
+          </div>
+        </div>
+
+        {/* BARRA DE RETORNO AUTOMÁTICO PARA O PRÓXIMO USUÁRIO */}
+        <div className="bg-[#120E24]/90 border border-[#7B28E2]/40 rounded-2xl p-3.5 sm:p-4 shadow-xl flex flex-col sm:flex-row items-center justify-between gap-3 text-xs print:hidden">
+          <div className="flex items-center gap-2.5 text-[#AAB0C6]">
+            <Clock className="w-4 h-4 text-[#B387F7] shrink-0 animate-pulse" />
+            <span>
+              Privacidade: Para liberar para o próximo colega, a tela retornará ao início em{' '}
+              <strong className="text-white font-mono font-bold bg-[#1A1336] px-2 py-0.5 rounded-md border border-[#2B1C58]">
+                {timeLeft}s
+              </strong>
+            </span>
+          </div>
+
+          <div className="flex items-center gap-2 shrink-0">
+            <button
+              type="button"
+              onClick={() => setIsPaused((p) => !p)}
+              className="text-[11px] font-semibold text-[#AAB0C6] hover:text-white px-2.5 py-1 rounded-lg border border-[#2B1C58] hover:border-[#7B28E2] transition cursor-pointer"
+            >
+              {isPaused ? '▶ Continuar tempo' : '⏸ Ler com calma'}
+            </button>
+            <button
+              type="button"
+              onClick={handleFinishAndHome}
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-gradient-to-r from-[#7B28E2] to-[#2D67FF] text-white font-bold text-xs hover:opacity-90 transition shadow-md shadow-[#7B28E2]/30 cursor-pointer active:scale-98"
+            >
+              <Home className="w-3.5 h-3.5" />
+              <span>Concluir Agora</span>
+            </button>
           </div>
         </div>
 

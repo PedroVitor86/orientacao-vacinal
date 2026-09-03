@@ -40,11 +40,7 @@ export default function QuestionnairePage() {
 
   useEffect(() => {
     setIsClient(true);
-    // Se o questionário anterior já tinha sido concluído com resultados, reinicia limpo para a nova pessoa
-    if (results !== null) {
-      resetQuiz();
-    }
-  }, [results, resetQuiz]);
+  }, []);
 
   const visibleSections = getVisibleSections();
   const safeIndex = getSafeStepIndex();
