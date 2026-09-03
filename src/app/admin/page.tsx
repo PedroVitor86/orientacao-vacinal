@@ -14,14 +14,51 @@ import {
   Sparkles,
   HelpCircle,
   CheckCircle2,
-  AlertCircle
+  AlertCircle,
+  Lock,
+  LogOut
 } from 'lucide-react';
 import { AnalyticsSummary } from '@/services/submission-service';
 
+const EMPTY_ANALYTICS: AnalyticsSummary = {
+  totalRespondents: 0,
+  byAffiliation: { dumas: 0, itapevi: 0, forcaVendas: 0 },
+  byAgeBracket: { '18_49': 0, '50_59': 0, '60_74': 0, '75_plus': 0 },
+  bySex: {
+    feminino: 0,
+    masculino: 0,
+    naoInformar: 0,
+    femininoPercentage: 0,
+    masculinoPercentage: 0,
+    naoInformarPercentage: 0,
+  },
+  vaccineStats: {
+    COVID_19: { count: 0, percentage: 0 },
+    VSR: { count: 0, percentage: 0 },
+    PNEUMO_20: { count: 0, percentage: 0 },
+  },
+  awarenessStats: {
+    sim: 0,
+    nao: 0,
+    parcial: 0,
+    simPercentage: 0,
+    naoPercentage: 0,
+    parcialPercentage: 0,
+    totalResponses: 0,
+  },
+  topConditions: [],
+  recentSubmissions: [],
+};
+
 export default function AdminPage() {
-  const [data, setData] = useState<AnalyticsSummary | null>(null);
+  const [data, setData] = useState<AnalyticsSummary>(EMPTY_ANALYTICS);
   const [loading, setLoading] = useState(true);
-  const [affiliationFilter, setAffiliationFilter] = useState<'ALL' | 'PFIZER' | 'ITAPEVI'>('ALL');
+  const [affiliationFilter, setAffiliationFilter] = useState<'ALL' | 'DUMAS' | 'ITAPEVI' | 'FORCA_DE_VENDAS' | 'PFIZER'>('ALL');
+
+  // Estados de controle de acesso com senha (padrão 0802)
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [passwordInput, setPasswordInput] = useState('');
+  const [authError, setAuthError] = useState(false);
 
   const loadData = async (filter = affiliationFilter) => {
     setLoading(true);
@@ -29,17 +66,42 @@ export default function AdminPage() {
       const url = filter === 'ALL' ? '/api/admin/metrics' : `/api/admin/metrics?affiliation=${filter}`;
       const res = await fetch(url);
       const json = await res.json();
-      setData(json);
+      setData(json || EMPTY_ANALYTICS);
     } catch (err) {
       console.error('Erro ao carregar dados do painel:', err);
+      setData(EMPTY_ANALYTICS);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    loadData(affiliationFilter);
+    const storedAuth = typeof window !== 'undefined' ? sessionStorage.getItem('trivax_admin_auth') : null;
+    if (storedAuth === 'true') {
+      setIsAuthenticated(true);
+      loadData(affiliationFilter);
+    } else {
+      setLoading(false);
+    }
   }, [affiliationFilter]);
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (passwordInput === '0802') {
+      setIsAuthenticated(true);
+      setAuthError(false);
+      sessionStorage.setItem('trivax_admin_auth', 'true');
+      loadData(affiliationFilter);
+    } else {
+      setAuthError(true);
+    }
+  };
+
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    setPasswordInput('');
+    sessionStorage.removeItem('trivax_admin_auth');
+  };
 
   const handleExportCSV = () => {
     const url = affiliationFilter === 'ALL' 
@@ -87,22 +149,37 @@ export default function AdminPage() {
             </div>
           </div>
 
-          <button
-            onClick={() => loadData()}
-            disabled={loading}
-            className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 sm:px-4 sm:py-2 rounded-full bg-[#120E24] hover:bg-[#201844] text-[#F2F3F7] transition cursor-pointer border border-[#2B1C58] hover:border-[#7B28E2]"
-          >
-            <RefreshCw className={`w-3.5 h-3.5 text-[#B387F7] ${loading ? 'animate-spin' : ''}`} />
-            <span className="hidden xs:inline">Atualizar</span>
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => loadData()}
+              disabled={loading || !isAuthenticated}
+              className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 sm:px-4 sm:py-2 rounded-full bg-[#120E24] hover:bg-[#201844] text-[#F2F3F7] transition cursor-pointer border border-[#2B1C58] hover:border-[#7B28E2]"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 text-[#B387F7] ${loading ? 'animate-spin' : ''}`} />
+              <span className="hidden xs:inline">Atualizar</span>
+            </button>
+
+            {isAuthenticated && (
+              <button
+                onClick={handleLogout}
+                className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 sm:px-4 sm:py-2 rounded-full bg-[#120E24] hover:bg-rose-950/50 text-rose-300 hover:text-rose-200 transition cursor-pointer border border-rose-900/40 hover:border-rose-500/60"
+                title="Bloquear painel"
+              >
+                <LogOut className="w-3.5 h-3.5 text-rose-400" />
+                <span className="hidden xs:inline">Sair</span>
+              </button>
+            )}
+          </div>
         </div>
       </header>
 
-      <main className="flex-1 max-w-6xl w-full mx-auto px-3.5 sm:px-6 py-6 sm:py-12 space-y-6 sm:space-y-8">
+      <main className={`flex-1 max-w-6xl w-full mx-auto px-3.5 sm:px-6 py-6 sm:py-12 space-y-6 sm:space-y-8 transition-all duration-500 ${
+        !isAuthenticated ? 'filter blur-2xl pointer-events-none select-none opacity-10' : ''
+      }`}>
         {/* BARRA SUPERIOR COM FILTROS E EXPORTAÇÃO */}
-        <div className="bg-[#120E24] rounded-2xl sm:rounded-3xl border border-[#2B1C58] p-5 sm:p-8 shadow-xl flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+        <div className="bg-[#120E24] rounded-2xl sm:rounded-3xl border border-[#2B1C58] p-5 sm:p-7 shadow-xl flex flex-col xl:flex-row xl:items-center justify-between gap-5">
           <div>
-            <h1 className="text-xl sm:text-3xl font-black text-white tracking-tight">
+            <h1 className="text-xl sm:text-2xl lg:text-3xl font-black text-white tracking-tight">
               Relatório Populacional TRIVAX
             </h1>
             <p className="text-xs sm:text-sm text-[#AAB0C6] mt-0.5">
@@ -110,48 +187,63 @@ export default function AdminPage() {
             </p>
           </div>
 
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+          <div className="flex flex-wrap sm:flex-nowrap items-center gap-3 shrink-0">
             {/* SELETOR DE UNIDADE */}
-            <div className="flex items-center bg-[#080612] p-1 rounded-full border border-[#2B1C58] text-xs font-semibold overflow-x-auto">
+            <div className="inline-flex items-center bg-[#080612] p-1 sm:p-1.5 rounded-full border border-[#2B1C58] text-xs font-semibold shadow-inner shrink-0">
               <button
+                type="button"
                 onClick={() => setAffiliationFilter('ALL')}
-                className={`flex-1 sm:flex-none px-3 sm:px-4 py-1.5 sm:py-2 rounded-full transition cursor-pointer text-center text-[11px] sm:text-xs whitespace-nowrap ${
+                className={`px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-full transition cursor-pointer text-center text-xs whitespace-nowrap font-medium shrink-0 ${
                   affiliationFilter === 'ALL'
-                    ? 'bg-gradient-to-r from-[#7B28E2] to-[#2D67FF] text-white shadow-md'
+                    ? 'bg-gradient-to-r from-[#7B28E2] to-[#2D67FF] text-white shadow-md font-bold'
                     : 'text-[#AAB0C6] hover:text-white'
                 }`}
               >
                 Todas
               </button>
               <button
-                onClick={() => setAffiliationFilter('PFIZER')}
-                className={`flex-1 sm:flex-none px-3 sm:px-4 py-1.5 sm:py-2 rounded-full transition cursor-pointer text-center text-[11px] sm:text-xs whitespace-nowrap ${
-                  affiliationFilter === 'PFIZER'
-                    ? 'bg-gradient-to-r from-[#7B28E2] to-[#2D67FF] text-white shadow-md'
+                type="button"
+                onClick={() => setAffiliationFilter('DUMAS')}
+                className={`px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-full transition cursor-pointer text-center text-xs whitespace-nowrap font-medium shrink-0 ${
+                  affiliationFilter === 'DUMAS'
+                    ? 'bg-gradient-to-r from-[#7B28E2] to-[#2D67FF] text-white shadow-md font-bold'
                     : 'text-[#AAB0C6] hover:text-white'
                 }`}
               >
-                Pfizer
+                Dumas
               </button>
               <button
+                type="button"
                 onClick={() => setAffiliationFilter('ITAPEVI')}
-                className={`flex-1 sm:flex-none px-3 sm:px-4 py-1.5 sm:py-2 rounded-full transition cursor-pointer text-center text-[11px] sm:text-xs whitespace-nowrap ${
+                className={`px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-full transition cursor-pointer text-center text-xs whitespace-nowrap font-medium shrink-0 ${
                   affiliationFilter === 'ITAPEVI'
-                    ? 'bg-gradient-to-r from-[#7B28E2] to-[#2D67FF] text-white shadow-md'
+                    ? 'bg-gradient-to-r from-[#7B28E2] to-[#2D67FF] text-white shadow-md font-bold'
                     : 'text-[#AAB0C6] hover:text-white'
                 }`}
               >
                 Itapevi
               </button>
+              <button
+                type="button"
+                onClick={() => setAffiliationFilter('FORCA_DE_VENDAS')}
+                className={`px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-full transition cursor-pointer text-center text-xs whitespace-nowrap font-medium shrink-0 ${
+                  affiliationFilter === 'FORCA_DE_VENDAS'
+                    ? 'bg-gradient-to-r from-[#7B28E2] to-[#2D67FF] text-white shadow-md font-bold'
+                    : 'text-[#AAB0C6] hover:text-white'
+                }`}
+              >
+                Força de Vendas
+              </button>
             </div>
 
             {/* BOTÃO EXPORTAR EXCEL MULTI-ABAS */}
             <button
+              type="button"
               onClick={handleExportCSV}
-              className="inline-flex items-center justify-center gap-2 px-4 sm:px-5 py-2.5 rounded-full bg-gradient-to-r from-[#7B28E2] to-[#2D67FF] text-white text-xs font-bold transition shadow-lg shadow-[#7B28E2]/30 cursor-pointer hover:opacity-90 active:scale-98"
+              className="inline-flex items-center justify-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 rounded-full bg-gradient-to-r from-[#7B28E2] to-[#2D67FF] text-white text-xs sm:text-sm font-bold transition shadow-lg shadow-[#7B28E2]/30 cursor-pointer hover:opacity-90 active:scale-98 shrink-0 whitespace-nowrap"
               title="Baixar planilha completa organizada em múltiplas abas / páginas no Microsoft Excel"
             >
-              <FileSpreadsheet className="w-4 h-4 text-white" />
+              <FileSpreadsheet className="w-4 h-4 text-white shrink-0" />
               <span>Exportar Excel (.XLSX)</span>
             </button>
           </div>
@@ -173,9 +265,19 @@ export default function AdminPage() {
                 Colaboradores avaliados no TRIVAX
               </p>
             </div>
-            <div className="pt-2 sm:pt-3 border-t border-[#2B1C58] text-[11px] text-[#AAB0C6] flex justify-between font-medium">
-              <span>Pfizer: <strong className="text-white">{data?.byAffiliation.pfizer ?? 0}</strong></span>
-              <span>Itapevi: <strong className="text-white">{data?.byAffiliation.itapevi ?? 0}</strong></span>
+            <div className="pt-2.5 sm:pt-3 border-t border-[#2B1C58] grid grid-cols-3 gap-1 text-center text-[10px] sm:text-[11px] text-[#AAB0C6]">
+              <div className="bg-[#1A1336]/60 p-1.5 rounded-lg border border-[#2B1C58]/60">
+                <span className="block text-[9px] text-[#AAB0C6] uppercase font-bold">Dumas</span>
+                <strong className="text-white text-xs sm:text-sm font-black">{data?.byAffiliation?.dumas ?? 0}</strong>
+              </div>
+              <div className="bg-[#1A1336]/60 p-1.5 rounded-lg border border-[#2B1C58]/60">
+                <span className="block text-[9px] text-[#AAB0C6] uppercase font-bold">Itapevi</span>
+                <strong className="text-white text-xs sm:text-sm font-black">{data?.byAffiliation?.itapevi ?? 0}</strong>
+              </div>
+              <div className="bg-[#1A1336]/60 p-1.5 rounded-lg border border-[#2B1C58]/60">
+                <span className="block text-[9px] text-[#AAB0C6] uppercase font-bold truncate">F. Vendas</span>
+                <strong className="text-white text-xs sm:text-sm font-black">{data?.byAffiliation?.forcaVendas ?? 0}</strong>
+              </div>
             </div>
           </div>
 
@@ -188,10 +290,10 @@ export default function AdminPage() {
             <div>
               <div className="flex items-baseline gap-2">
                 <span className="text-2xl sm:text-3xl font-black text-white">
-                  {data?.vaccineStats.COVID_19.count ?? 0}
+                  {data?.vaccineStats?.COVID_19?.count ?? 0}
                 </span>
                 <span className="text-xs sm:text-sm font-bold text-[#2D67FF]">
-                  ({data?.vaccineStats.COVID_19.percentage ?? 0}%)
+                  ({data?.vaccineStats?.COVID_19?.percentage ?? 0}%)
                 </span>
               </div>
               <p className="text-[11px] sm:text-xs text-[#AAB0C6] mt-0.5">
@@ -201,7 +303,7 @@ export default function AdminPage() {
             <div className="w-full bg-[#080612] h-1.5 sm:h-2 rounded-full overflow-hidden border border-[#2B1C58]">
               <div
                 className="bg-[#2D67FF] h-full rounded-full transition-all duration-500"
-                style={{ width: `${data?.vaccineStats.COVID_19.percentage ?? 0}%` }}
+                style={{ width: `${data?.vaccineStats?.COVID_19?.percentage ?? 0}%` }}
               />
             </div>
           </div>
@@ -215,20 +317,20 @@ export default function AdminPage() {
             <div>
               <div className="flex items-baseline gap-2">
                 <span className="text-2xl sm:text-3xl font-black text-white">
-                  {data?.vaccineStats.VSR.count ?? 0}
+                  {data?.vaccineStats?.VSR?.count ?? 0}
                 </span>
                 <span className="text-xs sm:text-sm font-bold text-[#B387F7]">
-                  ({data?.vaccineStats.VSR.percentage ?? 0}%)
+                  ({data?.vaccineStats?.VSR?.percentage ?? 0}%)
                 </span>
               </div>
               <p className="text-[11px] sm:text-xs text-[#AAB0C6] mt-0.5">
-                Gestantes 32-36s, ≥75a ou 50-74 com risco
+                Gestante ≥24 sem, ≥75a ou 50-74 com risco
               </p>
             </div>
             <div className="w-full bg-[#080612] h-1.5 sm:h-2 rounded-full overflow-hidden border border-[#2B1C58]">
               <div
                 className="bg-[#7B28E2] h-full rounded-full transition-all duration-500"
-                style={{ width: `${data?.vaccineStats.VSR.percentage ?? 0}%` }}
+                style={{ width: `${data?.vaccineStats?.VSR?.percentage ?? 0}%` }}
               />
             </div>
           </div>
@@ -242,10 +344,10 @@ export default function AdminPage() {
             <div>
               <div className="flex items-baseline gap-2">
                 <span className="text-2xl sm:text-3xl font-black text-white">
-                  {data?.vaccineStats.PNEUMO_20.count ?? 0}
+                  {data?.vaccineStats?.PNEUMO_20?.count ?? 0}
                 </span>
                 <span className="text-xs sm:text-sm font-bold text-[#B387F7]">
-                  ({data?.vaccineStats.PNEUMO_20.percentage ?? 0}%)
+                  ({data?.vaccineStats?.PNEUMO_20?.percentage ?? 0}%)
                 </span>
               </div>
               <p className="text-[11px] sm:text-xs text-[#AAB0C6] mt-0.5">
@@ -255,7 +357,7 @@ export default function AdminPage() {
             <div className="w-full bg-[#080612] h-1.5 sm:h-2 rounded-full overflow-hidden border border-[#2B1C58]">
               <div
                 className="bg-gradient-to-r from-[#7B28E2] to-[#2D67FF] h-full rounded-full transition-all duration-500"
-                style={{ width: `${data?.vaccineStats.PNEUMO_20.percentage ?? 0}%` }}
+                style={{ width: `${data?.vaccineStats?.PNEUMO_20?.percentage ?? 0}%` }}
               />
             </div>
           </div>
@@ -274,7 +376,7 @@ export default function AdminPage() {
               </h3>
             </div>
             <span className="text-xs text-[#AAB0C6] font-semibold bg-[#1A1336] px-3 py-1 rounded-full border border-[#2B1C58] w-fit">
-              Total de respostas: {data?.awarenessStats.totalResponses ?? 0}
+              Total de respostas: {data?.awarenessStats?.totalResponses ?? 0}
             </span>
           </div>
 
@@ -283,13 +385,13 @@ export default function AdminPage() {
             <div className="bg-[#1A1336] p-4 rounded-2xl border border-[#2B1C58] space-y-2">
               <div className="flex justify-between items-center text-xs text-[#AAB0C6]">
                 <span className="font-bold text-white">Sim, já sabia</span>
-                <span className="text-[#B387F7] font-bold">{data?.awarenessStats.simPercentage ?? 0}%</span>
+                <span className="text-[#B387F7] font-bold">{data?.awarenessStats?.simPercentage ?? 0}%</span>
               </div>
-              <p className="text-2xl font-black text-white">{data?.awarenessStats.sim ?? 0}</p>
+              <p className="text-2xl font-black text-white">{data?.awarenessStats?.sim ?? 0}</p>
               <div className="w-full bg-[#080612] h-2 rounded-full overflow-hidden border border-[#2B1C58]">
                 <div
                   className="bg-gradient-to-r from-[#7B28E2] to-[#2D67FF] h-full rounded-full transition-all duration-500"
-                  style={{ width: `${data?.awarenessStats.simPercentage ?? 0}%` }}
+                  style={{ width: `${data?.awarenessStats?.simPercentage ?? 0}%` }}
                 />
               </div>
             </div>
@@ -298,13 +400,13 @@ export default function AdminPage() {
             <div className="bg-[#1A1336] p-4 rounded-2xl border border-[#2B1C58] space-y-2">
               <div className="flex justify-between items-center text-xs text-[#AAB0C6]">
                 <span className="font-bold text-white">Não sabia</span>
-                <span className="text-[#2D67FF] font-bold">{data?.awarenessStats.naoPercentage ?? 0}%</span>
+                <span className="text-[#2D67FF] font-bold">{data?.awarenessStats?.naoPercentage ?? 0}%</span>
               </div>
-              <p className="text-2xl font-black text-white">{data?.awarenessStats.nao ?? 0}</p>
+              <p className="text-2xl font-black text-white">{data?.awarenessStats?.nao ?? 0}</p>
               <div className="w-full bg-[#080612] h-2 rounded-full overflow-hidden border border-[#2B1C58]">
                 <div
                   className="bg-[#2D67FF] h-full rounded-full transition-all duration-500"
-                  style={{ width: `${data?.awarenessStats.naoPercentage ?? 0}%` }}
+                  style={{ width: `${data?.awarenessStats?.naoPercentage ?? 0}%` }}
                 />
               </div>
             </div>
@@ -313,13 +415,13 @@ export default function AdminPage() {
             <div className="bg-[#1A1336] p-4 rounded-2xl border border-[#2B1C58] space-y-2">
               <div className="flex justify-between items-center text-xs text-[#AAB0C6]">
                 <span className="font-bold text-white">Sabia de algumas</span>
-                <span className="text-[#B387F7] font-bold">{data?.awarenessStats.parcialPercentage ?? 0}%</span>
+                <span className="text-[#B387F7] font-bold">{data?.awarenessStats?.parcialPercentage ?? 0}%</span>
               </div>
-              <p className="text-2xl font-black text-white">{data?.awarenessStats.parcial ?? 0}</p>
+              <p className="text-2xl font-black text-white">{data?.awarenessStats?.parcial ?? 0}</p>
               <div className="w-full bg-[#080612] h-2 rounded-full overflow-hidden border border-[#2B1C58]">
                 <div
                   className="bg-[#B387F7] h-full rounded-full transition-all duration-500"
-                  style={{ width: `${data?.awarenessStats.parcialPercentage ?? 0}%` }}
+                  style={{ width: `${data?.awarenessStats?.parcialPercentage ?? 0}%` }}
                 />
               </div>
             </div>
@@ -344,7 +446,7 @@ export default function AdminPage() {
                   { key: '60_74', label: '60 a 74 anos' },
                   { key: '75_plus', label: '75 anos ou mais' },
                 ].map((bracket) => {
-                  const count = data?.byAgeBracket[bracket.key] ?? 0;
+                  const count = data?.byAgeBracket?.[bracket.key] ?? 0;
                   const total = data?.totalRespondents || 1;
                   const pct = Math.round((count / total) * 100);
 
@@ -445,7 +547,7 @@ export default function AdminPage() {
 
             {data?.topConditions && data.topConditions.length > 0 ? (
               <div className="space-y-3 pt-1">
-                {data.topConditions.map((cond) => (
+                {data?.topConditions?.map((cond) => (
                   <div key={cond.name} className="space-y-1">
                     <div className="flex justify-between text-xs font-bold text-[#AAB0C6]">
                       <span className="truncate max-w-[200px]">{cond.name}</span>
@@ -498,7 +600,7 @@ export default function AdminPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#2B1C58]/60">
-                  {data.recentSubmissions.map((sub) => {
+                  {data?.recentSubmissions?.map((sub) => {
                     const dateFormatted = new Date(sub.timestamp).toLocaleString('pt-BR');
                     return (
                       <tr key={sub.id} className="hover:bg-[#1A1336]/60 transition">
@@ -506,7 +608,13 @@ export default function AdminPage() {
                           {dateFormatted}
                         </td>
                         <td className="py-2.5 sm:py-3 px-3 sm:px-4 font-semibold text-white">
-                          {sub.user_affiliation === 'PFIZER' ? 'Pfizer' : 'Itapevi'}
+                          {sub.user_affiliation === 'DUMAS' || sub.user_affiliation === 'PFIZER'
+                            ? 'Dumas'
+                            : sub.user_affiliation === 'ITAPEVI'
+                            ? 'Itapevi'
+                            : sub.user_affiliation === 'FORCA_DE_VENDAS'
+                            ? 'Força de Vendas'
+                            : sub.user_affiliation || 'Não informado'}
                         </td>
                         <td className="py-2.5 sm:py-3 px-3 sm:px-4 text-[#AAB0C6]">
                           {sub.age_bracket === '18_49'
@@ -584,6 +692,72 @@ export default function AdminPage() {
           )}
         </div>
       </main>
+
+      {/* MODAL DE AUTENTICAÇÃO COM SENHA E TELA 100% BORRADA */}
+      {!isAuthenticated && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#080612]/85 backdrop-blur-2xl animate-fadeIn">
+          <div className="max-w-sm w-full bg-[#120E24] border border-[#7B28E2]/60 rounded-3xl p-6 sm:p-8 shadow-2xl text-center space-y-5 relative overflow-hidden">
+            {/* GLOW DECORATIVO NO MODAL */}
+            <div className="absolute -top-12 left-1/2 -translate-x-1/2 w-48 h-32 bg-[#7B28E2]/30 blur-2xl pointer-events-none -z-10" />
+
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-[#7B28E2]/30 to-[#2D67FF]/30 border border-[#7B28E2]/50 flex items-center justify-center mx-auto text-[#B387F7] shadow-lg shadow-[#7B28E2]/25">
+              <Lock className="w-7 h-7" />
+            </div>
+
+            <div className="space-y-1.5">
+              <h2 className="text-xl font-black text-white">
+                Acesso Restrito
+              </h2>
+              <p className="text-xs text-[#AAB0C6] leading-relaxed">
+                Painel administrativo confidencial TRIVAX. Digite a senha de acesso para visualizar as métricas.
+              </p>
+            </div>
+
+            <form onSubmit={handleLogin} className="space-y-3.5 pt-1">
+              <div>
+                <input
+                  type="password"
+                  autoFocus
+                  placeholder="Digite a senha..."
+                  value={passwordInput}
+                  onChange={(e) => {
+                    setPasswordInput(e.target.value);
+                    setAuthError(false);
+                  }}
+                  className={`w-full text-center tracking-widest font-mono text-base px-4 py-3 rounded-2xl bg-[#1A1336] border transition outline-none text-white placeholder:text-[#6F768E] placeholder:tracking-normal ${
+                    authError 
+                      ? 'border-rose-500 ring-2 ring-rose-500/30' 
+                      : 'border-[#2B1C58] focus:border-[#7B28E2] focus:ring-2 focus:ring-[#7B28E2]/40'
+                  }`}
+                />
+                {authError && (
+                  <p className="text-xs font-semibold text-rose-400 mt-2 flex items-center justify-center gap-1.5">
+                    <AlertCircle className="w-3.5 h-3.5" />
+                    <span>Senha incorreta. Tente novamente.</span>
+                  </p>
+                )}
+              </div>
+
+              <button
+                type="submit"
+                className="w-full py-3.5 rounded-full bg-gradient-to-r from-[#7B28E2] via-[#5F30EB] to-[#2D67FF] text-white font-bold text-sm hover:opacity-90 transition shadow-lg shadow-[#7B28E2]/30 cursor-pointer active:scale-98"
+              >
+                Entrar no Painel
+              </button>
+            </form>
+
+            <div className="pt-1">
+              <Link
+                href="/"
+                className="text-xs text-[#AAB0C6] hover:text-white transition inline-flex items-center gap-1.5"
+              >
+                <ArrowLeft className="w-3.5 h-3.5" />
+                <span>Voltar à página inicial</span>
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

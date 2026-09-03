@@ -14,8 +14,13 @@ export const Navbar: React.FC<NavbarProps> = ({ onReset, showReset = false }) =>
   return (
     <header className="sticky top-0 z-50 bg-[#080612]/95 backdrop-blur-xl border-b border-[#2B1C58]/60 shadow-xl">
       <div className="max-w-6xl mx-auto px-3.5 sm:px-6 h-16 sm:h-20 flex items-center justify-between gap-2">
-        {/* LOGO TRIVAX COM ÍCONE TRANSPARENTE */}
-        <Link href="/" className="flex items-center gap-2.5 sm:gap-3 group shrink-0">
+        <Link 
+          href="/" 
+          onClick={() => {
+            if (onReset) onReset();
+          }}
+          className="flex items-center gap-2.5 sm:gap-3 group shrink-0"
+        >
           <div className="relative w-9 h-9 sm:w-10 sm:h-10 rounded-full overflow-hidden bg-gradient-to-tr from-[#3D1E78] to-[#7B28E2] p-0.5 shadow-md shadow-[#7B28E2]/40 group-hover:scale-105 transition duration-300">
             <div className="w-full h-full rounded-full bg-[#080612] flex items-center justify-center p-1">
               <Image

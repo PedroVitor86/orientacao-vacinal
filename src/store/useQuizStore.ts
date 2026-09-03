@@ -20,6 +20,8 @@ interface QuizState {
   setResults: (results: EvaluationResult[]) => void;
   setLastSubmissionId: (id: string | null) => void;
   setAwarenessFeedback: (feedback: string | null) => void;
+  cardUpdatedFeedback: string | null;
+  setCardUpdatedFeedback: (feedback: string | null) => void;
   goToNextStep: () => boolean; // retorna true se completou
   goToPrevStep: () => void;
   resetQuiz: () => void;
@@ -31,8 +33,11 @@ interface QuizState {
   getSafeStepIndex: () => number;
 }
 
-function checkVisibility(condition: any, facts: Record<string, any>): boolean {
+export function checkVisibility(condition: any, facts: Record<string, any>): boolean {
   if (!condition) return true;
+  if (condition.any_of && Array.isArray(condition.any_of)) {
+    return condition.any_of.some((k: string) => !!facts[k]);
+  }
   const factValue = facts[condition.fact];
   if (condition.operator === 'equal') return factValue === condition.value;
   if (condition.operator === 'notEqual') return factValue !== condition.value;
@@ -51,6 +56,7 @@ export const useQuizStore = create<QuizState>()(
       results: null,
       lastSubmissionId: null,
       awarenessFeedback: null,
+      cardUpdatedFeedback: null,
 
       setFact: (key, value) => {
         set((state) => {
@@ -111,6 +117,9 @@ export const useQuizStore = create<QuizState>()(
           if (checked && noneKey) {
             delete updated[noneKey]; // desmarca o "nenhuma das opções"
           }
+          if (!updated.uses_immunosuppressants && !updated.is_chemotherapy && !updated.is_radiotherapy) {
+            delete updated.immunosuppression_treatment_status;
+          }
           return { facts: updated };
         });
       },
@@ -126,6 +135,9 @@ export const useQuizStore = create<QuizState>()(
             for (const key of itemKeys) {
               delete updated[key];
             }
+            if (!updated.uses_immunosuppressants && !updated.is_chemotherapy && !updated.is_radiotherapy) {
+              delete updated.immunosuppression_treatment_status;
+            }
           }
           return { facts: updated };
         });
@@ -134,6 +146,7 @@ export const useQuizStore = create<QuizState>()(
       setResults: (results) => set({ results }),
       setLastSubmissionId: (id) => set({ lastSubmissionId: id }),
       setAwarenessFeedback: (feedback) => set({ awarenessFeedback: feedback }),
+      setCardUpdatedFeedback: (feedback) => set({ cardUpdatedFeedback: feedback }),
 
       getVisibleSections: () => {
         const { facts } = get();
@@ -190,6 +203,7 @@ export const useQuizStore = create<QuizState>()(
           results: null,
           lastSubmissionId: null,
           awarenessFeedback: null,
+          cardUpdatedFeedback: null,
         });
       },
     }),

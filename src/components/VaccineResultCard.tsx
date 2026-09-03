@@ -9,8 +9,6 @@ interface VaccineResultCardProps {
 }
 
 export const VaccineResultCard: React.FC<VaccineResultCardProps> = ({ result }) => {
-  const isCovid = result.vaccine_code === 'COVID_19';
-
   return (
     <div className="bg-[#120E24] rounded-2xl sm:rounded-3xl border border-[#2B1C58] p-4 sm:p-7 shadow-xl hover:border-[#7B28E2]/60 hover:shadow-[#7B28E2]/10 transition duration-300 space-y-4 sm:space-y-5">
       <div className="flex items-start justify-between gap-3 flex-wrap">
@@ -53,11 +51,11 @@ export const VaccineResultCard: React.FC<VaccineResultCardProps> = ({ result }) 
         )}
       </div>
 
-      {/* DIRECIONAMENTO ESPECÍFICO (COVID: BUSCADOR UBS | VSR / PNEUMO: CUIDAMOS JUNTOS) */}
-      <div className="pt-2 sm:pt-3 border-t border-[#2B1C58]/40 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5">
-        {isCovid ? (
+      {/* DIRECIONAMENTO: LOCALIZAR UBS + CUIDAMOS JUNTOS E TEXTO ABAIXO */}
+      <div className="pt-3 sm:pt-4 border-t border-[#2B1C58]/40 space-y-2.5">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2.5 sm:gap-3">
           <a
-            href="https://www.google.com/maps/search/UBS+posto+de+saude/"
+            href="https://deolhonafila.prefeitura.sp.gov.br/"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#1A1336] hover:bg-[#251A4F] border border-[#2D67FF]/50 text-white text-xs font-bold transition group shadow-md hover:border-[#2D67FF]"
@@ -66,7 +64,7 @@ export const VaccineResultCard: React.FC<VaccineResultCardProps> = ({ result }) 
             <span>Localizar UBS mais próxima para vacinação</span>
             <ExternalLink className="w-3 h-3 text-[#AAB0C6]" />
           </a>
-        ) : (
+
           <a
             href="https://cuidamosjuntos.pfizer.com.br/"
             target="_blank"
@@ -77,10 +75,11 @@ export const VaccineResultCard: React.FC<VaccineResultCardProps> = ({ result }) 
             <span>Saiba mais no portal Cuidamos Juntos</span>
             <ExternalLink className="w-3 h-3 text-[#AAB0C6]" />
           </a>
-        )}
-        <span className="text-[10px] text-[#AAB0C6] text-center sm:text-right">
-          Apresente sua caderneta na UBS ou consulte seu médico.
-        </span>
+        </div>
+
+        <p className="text-[11px] sm:text-xs text-[#AAB0C6]">
+          Apresente sua caderneta em um centro de imunização ou consulte seu médico.
+        </p>
       </div>
     </div>
   );

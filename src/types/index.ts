@@ -44,9 +44,10 @@ export interface EvaluationResult {
 }
 
 export interface VisibilityCondition {
-  fact: string;
-  operator: Operator;
-  value: any;
+  fact?: string;
+  operator?: Operator;
+  value?: any;
+  any_of?: string[];
 }
 
 export type InputType = 
@@ -67,6 +68,7 @@ export interface MultiCheckboxItem {
   fact_key: string;
   label: string;
   tooltip?: string;
+  sub_status_key?: string;
 }
 
 export interface QuestionItem {

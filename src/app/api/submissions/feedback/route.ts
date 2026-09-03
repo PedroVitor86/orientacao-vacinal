@@ -4,16 +4,16 @@ import { updateSubmissionFeedback } from '@/services/submission-service';
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { id, feedback } = body;
+    const { id, feedback, cardUpdatedFeedback } = body;
 
-    if (!id || !feedback) {
+    if (!id || (!feedback && !cardUpdatedFeedback)) {
       return NextResponse.json(
-        { error: 'ID e feedback são obrigatórios' },
+        { error: 'ID e ao menos um feedback são obrigatórios' },
         { status: 400 }
       );
     }
 
-    const updated = updateSubmissionFeedback(id, feedback);
+    const updated = updateSubmissionFeedback(id, feedback, cardUpdatedFeedback);
     return NextResponse.json({ success: updated });
   } catch (error) {
     console.error('Erro ao atualizar feedback de conscientização:', error);

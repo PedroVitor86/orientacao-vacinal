@@ -46,7 +46,7 @@ export const Footer: React.FC = () => {
           <div className="space-y-1">
             <p className="font-bold text-white text-[11px] sm:text-xs uppercase tracking-wider">Aviso Ético e Legal:</p>
             <p className="leading-relaxed text-[10px] sm:text-[11px]">
-              Esta plataforma digital tem finalidade puramente educativa e de apoio à decisão em saúde para o público adulto. As orientações fornecidas baseiam-se em critérios clínicos e epidemiológicos de fontes públicas oficiais (Programa Nacional de Imunizações - PNI e Sociedade Brasileira de Imunizações - SBIm). <strong className="text-white">Não substitui a consulta médica nem constitui prescrição ou diagnóstico.</strong> Consulte sempre um profissional de saúde ou dirija-se à Unidade Básica de Saúde com sua caderneta de vacinação em mãos.
+              Esta plataforma digital tem finalidade puramente educativa e de apoio à decisão em saúde para o público adulto. As orientações fornecidas baseiam-se em critérios clínicos e epidemiológicos seguindo recomendações de sociedades científicas (Programa Nacional de Imunizações - PNI e Sociedade Brasileira de Imunizações - SBIm). <strong className="text-white">Não substitui a consulta médica nem constitui prescrição ou diagnóstico.</strong> Consulte sempre um profissional de saúde ou dirija-se a um centro de imunização com sua caderneta de vacinação em mãos.
             </p>
           </div>
         </div>
@@ -55,7 +55,7 @@ export const Footer: React.FC = () => {
         <div className="flex flex-col sm:flex-row justify-between items-center gap-2.5 pt-1 text-[10px] sm:text-[11px] text-[#AAB0C6]/80 text-center sm:text-left">
           <p>© {new Date().getFullYear()} TRIVAX • Todos os direitos reservados.</p>
           <div className="flex items-center gap-3">
-            <span>Diretrizes PNI e SBIm</span>
+            <span>Diretrizes de sociedade científica</span>
             <span>•</span>
             <Link
               href="/admin"

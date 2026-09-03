@@ -12,13 +12,16 @@ export interface SubmissionRecord {
   reasons_by_vaccine: Record<string, string[]>;
   facts: Record<string, any>;
   awareness_feedback?: 'SIM' | 'NAO' | 'PARCIAL' | string;
+  card_updated_feedback?: 'SIM' | 'NAO' | 'NAO_SEI' | string;
 }
 
 export interface AnalyticsSummary {
   totalRespondents: number;
   byAffiliation: {
-    pfizer: number;
+    dumas: number;
     itapevi: number;
+    forcaVendas: number;
+    pfizer?: number;
   };
   byAgeBracket: Record<string, number>;
   bySex: {
@@ -83,14 +86,15 @@ export function saveSubmission(data: Omit<SubmissionRecord, 'id' | 'timestamp'>)
   return record;
 }
 
-export function updateSubmissionFeedback(id: string, feedback: string): boolean {
+export function updateSubmissionFeedback(id: string, feedback?: string, cardUpdatedFeedback?: string): boolean {
   ensureFileExists();
   const raw = fs.readFileSync(FILE_PATH, 'utf-8');
   const list: SubmissionRecord[] = JSON.parse(raw || '[]');
 
   const index = list.findIndex((item) => item.id === id);
   if (index !== -1) {
-    list[index].awareness_feedback = feedback;
+    if (feedback !== undefined) list[index].awareness_feedback = feedback;
+    if (cardUpdatedFeedback !== undefined) list[index].card_updated_feedback = cardUpdatedFeedback;
     fs.writeFileSync(FILE_PATH, JSON.stringify(list, null, 2), 'utf-8');
     return true;
   }
@@ -103,6 +107,9 @@ export function getAllSubmissions(affiliationFilter?: string): SubmissionRecord[
   const list: SubmissionRecord[] = JSON.parse(raw || '[]');
 
   if (affiliationFilter && affiliationFilter !== 'ALL') {
+    if (affiliationFilter === 'DUMAS') {
+      return list.filter((r) => r.user_affiliation === 'DUMAS' || r.user_affiliation === 'PFIZER');
+    }
     return list.filter((r) => r.user_affiliation === affiliationFilter);
   }
   return list;
@@ -112,7 +119,7 @@ export function getAnalytics(affiliationFilter?: string): AnalyticsSummary {
   const records = getAllSubmissions(affiliationFilter);
   const total = records.length;
 
-  const byAffiliation = { pfizer: 0, itapevi: 0 };
+  const byAffiliation = { dumas: 0, itapevi: 0, forcaVendas: 0, pfizer: 0 };
   const byAgeBracket: Record<string, number> = {
     '18_49': 0,
     '50_59': 0,
@@ -155,8 +162,14 @@ export function getAnalytics(affiliationFilter?: string): AnalyticsSummary {
   };
 
   for (const r of records) {
-    if (r.user_affiliation === 'PFIZER') byAffiliation.pfizer++;
-    if (r.user_affiliation === 'ITAPEVI') byAffiliation.itapevi++;
+    if (r.user_affiliation === 'DUMAS' || r.user_affiliation === 'PFIZER') {
+      byAffiliation.dumas++;
+      byAffiliation.pfizer++;
+    } else if (r.user_affiliation === 'ITAPEVI') {
+      byAffiliation.itapevi++;
+    } else if (r.user_affiliation === 'FORCA_DE_VENDAS') {
+      byAffiliation.forcaVendas++;
+    }
 
     if (r.age_bracket && byAgeBracket[r.age_bracket] !== undefined) {
       byAgeBracket[r.age_bracket]++;
@@ -281,7 +294,7 @@ export function exportSubmissionsToCSV(affiliationFilter?: string): string {
 
     // PÁGINA 2: SAÚDE DA MULHER (GESTANTE / PUÉRPERA)
     '[Etapa 2 - Mulher] Gestante',
-    '[Etapa 2 - Mulher] Idade Gestacional (32 a 36 semanas)',
+    '[Etapa 2 - Mulher] Idade Gestacional (a partir de 24 semanas)',
     '[Etapa 2 - Mulher] Puérpera (até 45 dias pós-parto)',
 
     // PÁGINA 3: GRUPOS ESPECIAIS & HÁBITOS DE VIDA
@@ -327,7 +340,14 @@ export function exportSubmissionsToCSV(affiliationFilter?: string): string {
 
     // Formatação de Identificação
     const dateStr = new Date(r.timestamp).toLocaleString('pt-BR');
-    const unitStr = r.user_affiliation === 'PFIZER' ? 'Pfizer' : 'Itapevi';
+    const unitStr =
+      r.user_affiliation === 'DUMAS' || r.user_affiliation === 'PFIZER'
+        ? 'Dumas'
+        : r.user_affiliation === 'ITAPEVI'
+        ? 'Itapevi'
+        : r.user_affiliation === 'FORCA_DE_VENDAS'
+        ? 'Força de Vendas'
+        : r.user_affiliation || 'Não informado';
     const ageStr =
       r.age_bracket === '18_49'
         ? '18 a 49 anos'

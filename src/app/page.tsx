@@ -1,8 +1,9 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { 
   ArrowRight, 
   ShieldCheck, 
@@ -17,8 +18,20 @@ import {
 } from 'lucide-react';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
+import { useQuizStore } from '@/store/useQuizStore';
 
 export default function HomePage() {
+  const router = useRouter();
+  const { resetQuiz } = useQuizStore();
+
+  useEffect(() => {
+    resetQuiz();
+  }, [resetQuiz]);
+
+  const handleStart = () => {
+    resetQuiz();
+    router.push('/questionario');
+  };
   return (
     <div className="min-h-screen flex flex-col bg-[#080612] text-[#F2F3F7] relative overflow-x-hidden selection:bg-[#7B28E2] selection:text-white">
       {/* GLOWS DE FUNDO CONTIDOS */}
@@ -45,17 +58,18 @@ export default function HomePage() {
             </h1>
 
             <p className="text-sm sm:text-base lg:text-lg text-[#AAB0C6] leading-relaxed max-w-xl">
-              Responda algumas perguntas sobre seu perfil e histórico de saúde para descobrir quais vacinas podem ser indicadas para você. Siga seu caminho com confiança.
+              Responda algumas perguntas sobre seu perfil e histórico de saúde para descobrir algumas vacinas do nosso portfólio que podem ser indicadas para você. Siga seu caminho com confiança.
             </p>
 
             <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
-              <Link
-                href="/questionario"
+              <button
+                type="button"
+                onClick={handleStart}
                 className="inline-flex items-center justify-center gap-3 px-7 py-3.5 sm:px-8 sm:py-4 rounded-full bg-gradient-to-r from-[#7B28E2] via-[#5F30EB] to-[#2D67FF] text-white font-bold text-sm sm:text-base hover:opacity-90 transition shadow-xl shadow-[#7B28E2]/30 group cursor-pointer text-center"
               >
                 <span>Iniciar agora</span>
                 <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition duration-200" />
-              </Link>
+              </button>
               <Link
                 href="#como-funciona"
                 className="inline-flex items-center justify-center gap-2 px-5 py-3.5 sm:px-6 sm:py-4 rounded-full bg-[#130E2A] hover:bg-[#201742] text-[#F2F3F7] font-semibold text-xs sm:text-sm border border-[#2B1C58] transition text-center"
@@ -196,36 +210,36 @@ export default function HomePage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 pt-2">
+            {/* PNEUMOCOCO */}
+            <div className="bg-[#120E24] border border-[#2B1C58] p-5 sm:p-6 rounded-3xl space-y-2.5 hover:border-[#B387F7] transition">
+              <div className="w-8 h-8 rounded-xl bg-[#B387F7]/20 text-[#B387F7] flex items-center justify-center font-bold text-xs">
+                01
+              </div>
+              <h3 className="font-bold text-base sm:text-lg text-white">Vacina contra o Pneumococo</h3>
+              <p className="text-xs text-[#AAB0C6] leading-relaxed">
+                Indicação universal a partir de 50 anos ou a partir de 18 anos com doenças crônicas.
+              </p>
+            </div>
+
             {/* COVID-19 */}
             <div className="bg-[#120E24] border border-[#2B1C58] p-5 sm:p-6 rounded-3xl space-y-2.5 hover:border-[#2D67FF] transition">
               <div className="w-8 h-8 rounded-xl bg-[#2D67FF]/20 text-[#2D67FF] flex items-center justify-center font-bold text-xs">
-                01
+                02
               </div>
               <h3 className="font-bold text-base sm:text-lg text-white">Vacina contra COVID-19</h3>
               <p className="text-xs text-[#AAB0C6] leading-relaxed">
-                Reforços direcionados a grupos prioritários, gestantes, puérperas, imunossuprimidos e doentes crônicos.
+                Doses atualizadas direcionadas a grupos prioritários, gestantes, puérperas, imunossuprimidos e doentes crônicos.
               </p>
             </div>
 
             {/* VSR */}
             <div className="bg-[#120E24] border border-[#2B1C58] p-5 sm:p-6 rounded-3xl space-y-2.5 hover:border-[#7B28E2] transition">
               <div className="w-8 h-8 rounded-xl bg-[#7B28E2]/20 text-[#B387F7] flex items-center justify-center font-bold text-xs">
-                02
+                03
               </div>
               <h3 className="font-bold text-base sm:text-lg text-white">Vacina contra VSR</h3>
               <p className="text-xs text-[#AAB0C6] leading-relaxed">
-                Proteção neonatal em gestantes (32-36 semanas) e prevenção de quadros graves em idosos e adultos com risco.
-              </p>
-            </div>
-
-            {/* PNEUMOCÓCICA 20 */}
-            <div className="bg-[#120E24] border border-[#2B1C58] p-5 sm:p-6 rounded-3xl space-y-2.5 hover:border-[#B387F7] transition">
-              <div className="w-8 h-8 rounded-xl bg-[#B387F7]/20 text-[#B387F7] flex items-center justify-center font-bold text-xs">
-                03
-              </div>
-              <h3 className="font-bold text-base sm:text-lg text-white">Pneumocócica 20-valente</h3>
-              <p className="text-xs text-[#AAB0C6] leading-relaxed">
-                Indicação universal a partir de 50 anos ou a partir de 18 anos com doenças crônicas ou tabagismo.
+                Proteção neonatal em gestantes (a partir de 24 semanas de gestação) e prevenção de quadros graves em idosos e adultos com doenças crônicas.
               </p>
             </div>
           </div>
@@ -306,7 +320,7 @@ export default function HomePage() {
                 <span>O sistema substitui consulta médica?</span>
               </h4>
               <p className="text-xs text-[#AAB0C6] leading-relaxed">
-                Não. O TRIVAX é uma plataforma educativa de apoio à decisão. Suas orientações devem ser validadas com um profissional de saúde ou na UBS com sua caderneta em mãos.
+                Não. O TRIVAX é uma plataforma educativa de apoio à decisão. Suas orientações devem ser validadas com um profissional de saúde ou em um centro de imunização com sua caderneta em mãos.
               </p>
             </div>
 
@@ -334,13 +348,14 @@ export default function HomePage() {
           </div>
 
           <div>
-            <Link
-              href="/questionario"
+            <button
+              type="button"
+              onClick={handleStart}
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 sm:px-10 sm:py-4 rounded-full bg-gradient-to-r from-[#7B28E2] to-[#2D67FF] text-white font-bold text-sm sm:text-base hover:opacity-90 transition shadow-xl shadow-[#7B28E2]/40 cursor-pointer"
             >
               <span>Começar Questionário TRIVAX</span>
               <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
-            </Link>
+            </button>
           </div>
         </section>
       </main>

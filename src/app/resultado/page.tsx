@@ -19,7 +19,8 @@ import {
   HelpCircle,
   ExternalLink,
   MapPin,
-  Info
+  Info,
+  Home
 } from 'lucide-react';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
@@ -40,11 +41,14 @@ export default function ResultadoPage() {
     resetQuiz,
     lastSubmissionId,
     awarenessFeedback,
-    setAwarenessFeedback
+    setAwarenessFeedback,
+    cardUpdatedFeedback,
+    setCardUpdatedFeedback
   } = useQuizStore();
 
   const [copied, setCopied] = useState(false);
   const [feedbackSaved, setFeedbackSaved] = useState(false);
+  const [cardUpdatedFeedbackSaved, setCardUpdatedFeedbackSaved] = useState(false);
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
@@ -75,8 +79,9 @@ export default function ResultadoPage() {
   };
 
   const getAffiliationLabel = () => {
-    if (facts.user_affiliation === 'PFIZER') return 'Pfizer';
+    if (facts.user_affiliation === 'DUMAS' || facts.user_affiliation === 'PFIZER') return 'Dumas';
     if (facts.user_affiliation === 'ITAPEVI') return 'Itapevi';
+    if (facts.user_affiliation === 'FORCA_DE_VENDAS') return 'Força de Vendas';
     return null;
   };
 
@@ -88,7 +93,10 @@ export default function ResultadoPage() {
       `Total de vacinas potencialmente indicadas: ${eligibleList.length}`,
       '',
       ...eligibleList.map(
-        (v) => `✅ *${v.vaccine_name}*\n${v.reasons.map((r) => `  • ${r.description}`).join('\n')}`
+        (r, i) =>
+          `${i + 1}. *${r.vaccine_name}*\n   Motivos:\n${r.reasons
+            .map((reas) => `   • ${reas.description}`)
+            .join('\n')}`
       ),
       '',
       'ℹ️ *Importante:* Vacinas disponíveis para toda a população. Este resumo retrata a elegibilidade do mercado público (SUS). Lembre-se também de manter as vacinas de Gripe e Sarampo em dia.',
@@ -98,6 +106,26 @@ export default function ResultadoPage() {
     navigator.clipboard.writeText(summaryText);
     setCopied(true);
     setTimeout(() => setCopied(false), 3000);
+  };
+
+  const handleCardUpdatedSelect = async (val: string) => {
+    setCardUpdatedFeedback(val);
+    setCardUpdatedFeedbackSaved(true);
+
+    if (lastSubmissionId) {
+      try {
+        await fetch('/api/submissions/feedback', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            id: lastSubmissionId,
+            cardUpdatedFeedback: val,
+          }),
+        });
+      } catch (err) {
+        console.warn('Erro ao sincronizar feedback de caderneta:', err);
+      }
+    }
   };
 
   const handleAwarenessSelect = async (val: string) => {
@@ -209,7 +237,7 @@ export default function ResultadoPage() {
                 <span>Vacinas Potencialmente Elegíveis ({eligibleList.length})</span>
               </h2>
               <span className="text-[10px] sm:text-xs text-[#AAB0C6]">
-                Apresente na sua UBS ou clínica
+                Apresente em um centro de imunização ou clínica
               </span>
             </div>
 
@@ -321,7 +349,7 @@ export default function ResultadoPage() {
             </a>
 
             <a
-              href="https://www.google.com/maps/search/UBS+posto+de+saude/"
+              href="https://deolhonafila.prefeitura.sp.gov.br/"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full bg-[#130E2A] hover:bg-[#201742] text-white text-xs sm:text-sm font-semibold border border-[#2B1C58] transition cursor-pointer"
@@ -333,51 +361,98 @@ export default function ResultadoPage() {
           </div>
         </div>
 
-        {/* PERGUNTA DE CONSCIENTIZAÇÃO / FEEDBACK */}
-        <div className="bg-[#120E24] rounded-2xl sm:rounded-3xl border border-[#7B28E2]/40 p-5 sm:p-7 shadow-xl space-y-4 print:hidden relative overflow-hidden">
-          <div className="space-y-1">
-            <span className="inline-block text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[#B387F7] bg-[#1F1545] border border-[#7B28E2]/30 px-2.5 py-0.5 rounded-full mb-1">
-              Pesquisa de Conscientização
-            </span>
-            <h3 className="text-base sm:text-lg font-black text-white leading-snug">
-              Você sabia que estava elegível para essas vacinas?
-            </h3>
-            <p className="text-[11px] sm:text-xs text-[#AAB0C6]">
-              Sua resposta é anônima e nos ajuda a planejar as orientações de saúde preventiva.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3 pt-1">
-            {[
-              { value: 'SIM', label: 'Sim, já sabia' },
-              { value: 'NAO', label: 'Não sabia' },
-              { value: 'PARCIAL', label: 'Sabia de algumas' },
-            ].map((opt) => {
-              const isSelected = awarenessFeedback === opt.value;
-              return (
-                <button
-                  key={opt.value}
-                  type="button"
-                  onClick={() => handleAwarenessSelect(opt.value)}
-                  className={`min-h-[46px] px-4 py-2.5 rounded-xl sm:rounded-2xl border text-xs sm:text-sm font-semibold transition flex items-center justify-between cursor-pointer active:scale-98 ${
-                    isSelected
-                      ? 'bg-[#24174D] border-[#7B28E2] text-white ring-2 ring-[#7B28E2]/40 shadow-lg shadow-[#7B28E2]/25 font-bold'
-                      : 'bg-[#1A1336]/80 border-[#2B1C58] hover:bg-[#201844] text-[#F2F3F7] hover:border-[#7B28E2]/40'
-                  }`}
-                >
-                  <span>{opt.label}</span>
-                  {isSelected && <Check className="w-4 h-4 text-[#B387F7] shrink-0 ml-1.5" />}
-                </button>
-              );
-            })}
-          </div>
-
-          {feedbackSaved && (
-            <div className="text-xs text-[#B387F7] flex items-center gap-1.5 pt-1 animate-fadeIn">
-              <CheckCircle2 className="w-4 h-4 text-[#B387F7]" />
-              <span>Obrigado! Sua resposta foi gravada com sucesso.</span>
+        {/* PESQUISA DE CONSCIENTIZAÇÃO UNIFICADA */}
+        <div className="bg-[#120E24] rounded-2xl sm:rounded-3xl border border-[#7B28E2]/40 p-5 sm:p-7 shadow-xl space-y-6 print:hidden relative overflow-hidden">
+          {/* PERGUNTA 1: ELEGIBILIDADE PARA AS VACINAS */}
+          <div className="space-y-3.5">
+            <div className="space-y-1">
+              <span className="inline-block text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[#B387F7] bg-[#1F1545] border border-[#7B28E2]/30 px-2.5 py-0.5 rounded-full mb-1">
+                Pesquisa de Conscientização
+              </span>
+              <h3 className="text-base sm:text-lg font-black text-white leading-snug">
+                Você sabia que estava elegível para essas vacinas?
+              </h3>
+              <p className="text-[11px] sm:text-xs text-[#AAB0C6]">
+                Sua resposta é anônima e nos ajuda a planejar as orientações de saúde preventiva.
+              </p>
             </div>
-          )}
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3">
+              {[
+                { value: 'SIM', label: 'Sim, já sabia' },
+                { value: 'NAO', label: 'Não sabia' },
+                { value: 'PARCIAL', label: 'Sabia de algumas' },
+              ].map((opt) => {
+                const isSelected = awarenessFeedback === opt.value;
+                return (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    onClick={() => handleAwarenessSelect(opt.value)}
+                    className={`min-h-[46px] px-4 py-2.5 rounded-xl sm:rounded-2xl border text-xs sm:text-sm font-semibold transition flex items-center justify-between cursor-pointer active:scale-98 ${
+                      isSelected
+                        ? 'bg-[#24174D] border-[#7B28E2] text-white ring-2 ring-[#7B28E2]/40 shadow-lg shadow-[#7B28E2]/25 font-bold'
+                        : 'bg-[#1A1336]/80 border-[#2B1C58] hover:bg-[#201844] text-[#F2F3F7] hover:border-[#7B28E2]/40'
+                    }`}
+                  >
+                    <span>{opt.label}</span>
+                    {isSelected && <Check className="w-4 h-4 text-[#B387F7] shrink-0 ml-1.5" />}
+                  </button>
+                );
+              })}
+            </div>
+
+            {feedbackSaved && (
+              <div className="text-xs text-[#B387F7] flex items-center gap-1.5 pt-0.5 animate-fadeIn">
+                <CheckCircle2 className="w-4 h-4 text-[#B387F7]" />
+                <span>Obrigado! Sua resposta foi gravada com sucesso.</span>
+              </div>
+            )}
+          </div>
+
+          {/* DIVISOR E PERGUNTA 2: CADERNETA ATUALIZADA */}
+          <div className="border-t border-[#2B1C58]/60 pt-5 space-y-3.5">
+            <div className="space-y-1">
+              <h3 className="text-base sm:text-lg font-black text-white leading-snug">
+                Sua caderneta de vacinação está atualizada?
+              </h3>
+              <p className="text-[11px] sm:text-xs text-[#AAB0C6]">
+                Sua resposta é anônima e nos ajuda a planejar as orientações de saúde preventiva.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3">
+              {[
+                { value: 'SIM', label: 'Sim, está atualizada' },
+                { value: 'NAO', label: 'Não está atualizada' },
+                { value: 'NAO_SEI', label: 'Não sei informar' },
+              ].map((opt) => {
+                const isSelected = cardUpdatedFeedback === opt.value;
+                return (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    onClick={() => handleCardUpdatedSelect(opt.value)}
+                    className={`min-h-[46px] px-4 py-2.5 rounded-xl sm:rounded-2xl border text-xs sm:text-sm font-semibold transition flex items-center justify-between cursor-pointer active:scale-98 ${
+                      isSelected
+                        ? 'bg-[#24174D] border-[#7B28E2] text-white ring-2 ring-[#7B28E2]/40 shadow-lg shadow-[#7B28E2]/25 font-bold'
+                        : 'bg-[#1A1336]/80 border-[#2B1C58] hover:bg-[#201844] text-[#F2F3F7] hover:border-[#7B28E2]/40'
+                    }`}
+                  >
+                    <span>{opt.label}</span>
+                    {isSelected && <Check className="w-4 h-4 text-[#B387F7] shrink-0 ml-1.5" />}
+                  </button>
+                );
+              })}
+            </div>
+
+            {cardUpdatedFeedbackSaved && (
+              <div className="text-xs text-[#B387F7] flex items-center gap-1.5 pt-0.5 animate-fadeIn">
+                <CheckCircle2 className="w-4 h-4 text-[#B387F7]" />
+                <span>Obrigado! Sua resposta foi gravada com sucesso.</span>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* AVISO MÉDICO OBRIGATÓRIO */}
@@ -388,10 +463,10 @@ export default function ResultadoPage() {
               Próximos Passos e Recomendações:
             </h3>
             <p>
-              1. <strong>Procure uma Unidade de Saúde ou seu Médico:</strong> Leve sua caderneta de vacinação e este relatório para conferência do histórico de doses.
+              1. <strong>Procure um Centro de Imunização ou seu Médico:</strong> Leve sua caderneta de vacinação para conferência do histórico de doses.
             </p>
             <p>
-              2. <strong>Contraindicações e Intervalos:</strong> Caso esteja com febre ou histórico de reações alérgicas graves, informe a equipe de saúde.
+              2. <strong>Contraindicações e Intervalos:</strong> Caso esteja com febre ou histórico de reações alérgicas graves, procure um serviço de saúde.
             </p>
             <p>
               3. <strong>Validade do Diagnóstico:</strong> Este sistema calcula probabilidades epidemiológicas e não substitui a consulta médica individualizada.
@@ -399,15 +474,27 @@ export default function ResultadoPage() {
           </div>
         </div>
 
-        {/* BOTÃO RECOMEÇAR */}
-        <div className="flex justify-center pt-2 sm:pt-4 print:hidden">
+        {/* BOTÕES FINAIS: CONCLUIR E VOLTAR AO INÍCIO / REFAZER */}
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2 sm:pt-4 print:hidden">
+          <button
+            type="button"
+            onClick={() => {
+              resetQuiz();
+              router.push('/');
+            }}
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 sm:py-4 rounded-full bg-gradient-to-r from-[#7B28E2] via-[#5F30EB] to-[#2D67FF] text-white font-bold text-xs sm:text-sm hover:opacity-90 transition shadow-xl shadow-[#7B28E2]/30 cursor-pointer active:scale-98"
+          >
+            <Home className="w-4 h-4" />
+            <span>Finalizar e Voltar ao Início</span>
+          </button>
+
           <button
             type="button"
             onClick={() => {
               resetQuiz();
               router.push('/questionario');
             }}
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full border border-[#2B1C58] bg-[#120E24] hover:bg-[#201844] hover:border-[#7B28E2]/50 text-white font-bold text-xs sm:text-sm transition shadow-lg cursor-pointer"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 sm:py-4 rounded-full border border-[#2B1C58] bg-[#120E24] hover:bg-[#201844] hover:border-[#7B28E2]/50 text-[#AAB0C6] hover:text-white font-semibold text-xs sm:text-sm transition cursor-pointer active:scale-98"
           >
             <RotateCcw className="w-4 h-4 text-[#B387F7]" />
             <span>Refazer Avaliação</span>

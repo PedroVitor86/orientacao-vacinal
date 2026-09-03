@@ -6,7 +6,7 @@ import { ArrowLeft, ArrowRight, CheckCircle, AlertCircle, Sparkles } from 'lucid
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { QuestionCard } from '@/components/QuestionCard';
-import { useQuizStore } from '@/store/useQuizStore';
+import { useQuizStore, checkVisibility } from '@/store/useQuizStore';
 import { defaultRuleEngine } from '@/engine/rule-engine';
 import { RuleDefinition } from '@/types';
 import rulesData from '@/config/rules.json';
@@ -30,6 +30,7 @@ export default function QuestionnairePage() {
     getProgressPercentage,
     getSafeStepIndex,
     setResults,
+    results,
     setLastSubmissionId,
   } = useQuizStore();
 
@@ -39,7 +40,11 @@ export default function QuestionnairePage() {
 
   useEffect(() => {
     setIsClient(true);
-  }, []);
+    // Se o questionário anterior já tinha sido concluído com resultados, reinicia limpo para a nova pessoa
+    if (results !== null) {
+      resetQuiz();
+    }
+  }, [results, resetQuiz]);
 
   const visibleSections = getVisibleSections();
   const safeIndex = getSafeStepIndex();
@@ -56,7 +61,7 @@ export default function QuestionnairePage() {
       for (const q of section.questions) {
         if (
           q.visibility_condition &&
-          facts[q.visibility_condition.fact] !== q.visibility_condition.value
+          !checkVisibility(q.visibility_condition, facts)
         ) {
           continue;
         }
@@ -85,7 +90,7 @@ export default function QuestionnairePage() {
     // Validação da Etapa de Identificação Inicial
     if (currentSection.id === 'sec-identificacao') {
       if (!facts.user_affiliation) {
-        setValidationError('Por favor, selecione se você é da Pfizer ou Itapevi.');
+        setValidationError('Por favor, selecione sua unidade ou área (Dumas, Itapevi ou Força de Vendas).');
         return;
       }
       if (!facts.age_bracket) {
@@ -195,7 +200,7 @@ export default function QuestionnairePage() {
           {currentSection.questions.map((q) => {
             if (
               q.visibility_condition &&
-              facts[q.visibility_condition.fact] !== q.visibility_condition.value
+              !checkVisibility(q.visibility_condition, facts)
             ) {
               return null;
             }
