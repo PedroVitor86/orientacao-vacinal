@@ -313,10 +313,10 @@ export default function ResultadoPage() {
                 Nenhum critério prioritário específico identificado
               </h2>
               <p className="text-xs sm:text-sm text-[#AAB0C6] leading-relaxed">
-                Com base nas respostas informadas, você não se enquadra atualmente nos critérios de prioridade ou grupos de risco para estas três vacinas específicas no mercado público (vacina contra a COVID-19 [doses atualizadas], vacina contra o VSR ou vacina contra o pneumococo).
+                Com base nas respostas informadas, você não se enquadra atualmente nos critérios de prioridade ou grupos de risco para estas três vacinas específicas no mercado público (vacina contra a COVID-19 [doses atualizadas], vacina contra o VSR ou vacina contra o Pneumococo).
               </p>
               <p className="text-[11px] sm:text-xs text-[#B387F7] pt-1 leading-relaxed">
-                Lembramos que a vacina contra o VSR e a vacina contra o Pneumococo podem ser acessadas na rede privada mediante avaliação médica, com direito a reembolso para colegas Pfizer dependentes.
+                Lembramos que a vacina contra o VSR e a vacina contra o Pneumococo podem ser acessadas na rede privada mediante avaliação médica, com direito a reembolso para colegas Pfizer e dependentes.
               </p>
             </div>
           </div>
