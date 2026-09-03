@@ -131,7 +131,7 @@
           "fact": "age",
           "operator": "greaterThanInclusive",
           "value": 75,
-          "reason": "Idade igual ou superior a 75 anos"
+          "reason": "Idade igual ou superior a 75 anos (Vacina disponível no mercado privado, com direito a reembolso)"
         },
         {
           "all": [

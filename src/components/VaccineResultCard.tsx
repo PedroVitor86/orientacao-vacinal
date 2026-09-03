@@ -1,14 +1,40 @@
 'use client';
 
-import React from 'react';
-import { CheckCircle2, Info, Sparkles, MapPin, ExternalLink, HeartHandshake } from 'lucide-react';
+import { CheckCircle2, Info, Sparkles, MapPin, ExternalLink, HeartHandshake, ShieldAlert } from 'lucide-react';
 import { EvaluationResult } from '../types';
 
 interface VaccineResultCardProps {
   result: EvaluationResult;
 }
 
+const getCuidamosJuntosUrl = (vaccineCode: string) => {
+  switch (vaccineCode) {
+    case 'COVID_19':
+      return 'https://www.cuidamosjuntos.com.br/covid-19-o-risco-que-nao-vale-pena';
+    case 'VSR':
+      return 'https://www.cuidamosjuntos.com.br/saude/doencas-respiratorias/virus-sincicial-respiratorio-vsr/virus-sincicial-respiratorio-tudo-o';
+    case 'PNEUMO_20':
+      return 'https://www.cuidamosjuntos.com.br/prevencao/vacinacao/pneumonia';
+    default:
+      return 'https://www.cuidamosjuntos.com.br/';
+  }
+};
+
 export const VaccineResultCard: React.FC<VaccineResultCardProps> = ({ result }) => {
+  const cuidamosJuntosLink = getCuidamosJuntosUrl(result.vaccine_code);
+
+  const formatReasonDescription = (desc: string) => {
+    if (result.vaccine_code === 'VSR') {
+      if (
+        (desc.includes('75 anos') || desc.toLowerCase().includes('idoso') || desc.includes('50 e 74 anos')) &&
+        !desc.includes('mercado privado')
+      ) {
+        return `${desc} (Vacina disponível no mercado privado, com direito a reembolso)`;
+      }
+    }
+    return desc;
+  };
+
   return (
     <div className="bg-[#120E24] rounded-2xl sm:rounded-3xl border border-[#2B1C58] p-4 sm:p-7 shadow-xl hover:border-[#7B28E2]/60 hover:shadow-[#7B28E2]/10 transition duration-300 space-y-4 sm:space-y-5">
       <div className="flex items-start justify-between gap-3 flex-wrap">
@@ -42,12 +68,22 @@ export const VaccineResultCard: React.FC<VaccineResultCardProps> = ({ result }) 
                 className="flex items-start gap-2.5 sm:gap-3 text-xs sm:text-sm text-[#F2F3F7] bg-[#1A1336]/80 p-3 sm:p-3.5 rounded-xl sm:rounded-2xl border border-[#2B1C58]"
               >
                 <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-gradient-to-r from-[#7B28E2] to-[#2D67FF] shrink-0 mt-1.5 shadow-xs" />
-                <span className="leading-relaxed font-medium">{reason.description}</span>
+                <span className="leading-relaxed font-medium">{formatReasonDescription(reason.description)}</span>
               </li>
             ))}
           </ul>
         ) : (
           <p className="text-xs text-[#AAB0C6] italic">Critério de rotina atendido conforme faixa de recomendação.</p>
+        )}
+
+        {/* AVISO ESPECÍFICO DE REEMBOLSO PRIVADO PARA VSR */}
+        {result.vaccine_code === 'VSR' && (
+          <div className="mt-2.5 p-3 sm:p-3.5 rounded-xl sm:rounded-2xl bg-[#1F1545]/90 border border-[#7B28E2]/40 text-xs text-[#E1D4F9] leading-relaxed flex items-start gap-2.5 shadow-md">
+            <Info className="w-4 h-4 text-[#B387F7] shrink-0 mt-0.5" />
+            <span>
+              Lembramos que a vacina contra o VSR e a vacina contra o Pneumococo podem ser acessadas na rede privada mediante avaliação médica, com direito a reembolso para colegas Pfizer dependentes.
+            </span>
+          </div>
         )}
       </div>
 
@@ -66,7 +102,7 @@ export const VaccineResultCard: React.FC<VaccineResultCardProps> = ({ result }) 
           </a>
 
           <a
-            href="https://cuidamosjuntos.pfizer.com.br/"
+            href={cuidamosJuntosLink}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#1A1336] hover:bg-[#251A4F] border border-[#7B28E2]/50 text-white text-xs font-bold transition group shadow-md hover:border-[#7B28E2]"
