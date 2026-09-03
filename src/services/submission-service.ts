@@ -58,22 +58,69 @@ export interface AnalyticsSummary {
   }[];
 }
 
-const DATA_DIR = path.join(process.cwd(), 'data');
+const IS_VERCEL = !!process.env.VERCEL;
+const DATA_DIR = IS_VERCEL ? '/tmp' : path.join(process.cwd(), 'data');
 const FILE_PATH = path.join(DATA_DIR, 'submissions.json');
+const BUNDLED_FILE_PATH = path.join(process.cwd(), 'data', 'submissions.json');
+
+// Cache em memória para ambientes serverless
+declare global {
+  var __TRIVAX_SUBMISSIONS__: SubmissionRecord[] | undefined;
+}
 
 function ensureFileExists() {
-  if (!fs.existsSync(DATA_DIR)) {
-    fs.mkdirSync(DATA_DIR, { recursive: true });
+  try {
+    if (!fs.existsSync(DATA_DIR)) {
+      fs.mkdirSync(DATA_DIR, { recursive: true });
+    }
+    if (!fs.existsSync(FILE_PATH)) {
+      if (IS_VERCEL && fs.existsSync(BUNDLED_FILE_PATH)) {
+        try {
+          const content = fs.readFileSync(BUNDLED_FILE_PATH, 'utf-8');
+          fs.writeFileSync(FILE_PATH, content.replace(/^\uFEFF/, '').trim() || '[]', 'utf-8');
+          return;
+        } catch {}
+      }
+      fs.writeFileSync(FILE_PATH, '[]', 'utf-8');
+    }
+  } catch (err) {
+    console.warn('ensureFileExists warning:', err);
   }
-  if (!fs.existsSync(FILE_PATH)) {
-    fs.writeFileSync(FILE_PATH, JSON.stringify([], null, 2), 'utf-8');
+}
+
+function readSubmissions(): SubmissionRecord[] {
+  try {
+    ensureFileExists();
+    if (fs.existsSync(FILE_PATH)) {
+      const raw = fs.readFileSync(FILE_PATH, 'utf-8');
+      const clean = (raw || '').replace(/^\uFEFF/, '').trim();
+      if (clean) {
+        const parsed = JSON.parse(clean);
+        if (Array.isArray(parsed)) {
+          globalThis.__TRIVAX_SUBMISSIONS__ = parsed;
+          return parsed;
+        }
+      }
+    }
+  } catch (err) {
+    console.error('Erro ao ler submissions.json:', err);
+  }
+
+  return globalThis.__TRIVAX_SUBMISSIONS__ || [];
+}
+
+function writeSubmissions(list: SubmissionRecord[]) {
+  globalThis.__TRIVAX_SUBMISSIONS__ = list;
+  try {
+    ensureFileExists();
+    fs.writeFileSync(FILE_PATH, JSON.stringify(list, null, 2), 'utf-8');
+  } catch (err) {
+    console.error('Erro ao gravar submissions.json:', err);
   }
 }
 
 export function saveSubmission(data: Omit<SubmissionRecord, 'id' | 'timestamp'>): SubmissionRecord {
-  ensureFileExists();
-  const raw = fs.readFileSync(FILE_PATH, 'utf-8');
-  const list: SubmissionRecord[] = JSON.parse(raw || '[]');
+  const list = readSubmissions();
 
   const record: SubmissionRecord = {
     id: 'sub_' + Math.random().toString(36).substring(2, 9) + Date.now().toString(36),
@@ -82,29 +129,25 @@ export function saveSubmission(data: Omit<SubmissionRecord, 'id' | 'timestamp'>)
   };
 
   list.unshift(record); // adiciona no início
-  fs.writeFileSync(FILE_PATH, JSON.stringify(list, null, 2), 'utf-8');
+  writeSubmissions(list);
   return record;
 }
 
 export function updateSubmissionFeedback(id: string, feedback?: string, cardUpdatedFeedback?: string): boolean {
-  ensureFileExists();
-  const raw = fs.readFileSync(FILE_PATH, 'utf-8');
-  const list: SubmissionRecord[] = JSON.parse(raw || '[]');
+  const list = readSubmissions();
 
   const index = list.findIndex((item) => item.id === id);
   if (index !== -1) {
     if (feedback !== undefined) list[index].awareness_feedback = feedback;
     if (cardUpdatedFeedback !== undefined) list[index].card_updated_feedback = cardUpdatedFeedback;
-    fs.writeFileSync(FILE_PATH, JSON.stringify(list, null, 2), 'utf-8');
+    writeSubmissions(list);
     return true;
   }
   return false;
 }
 
 export function getAllSubmissions(affiliationFilter?: string): SubmissionRecord[] {
-  ensureFileExists();
-  const raw = fs.readFileSync(FILE_PATH, 'utf-8');
-  const list: SubmissionRecord[] = JSON.parse(raw || '[]');
+  const list = readSubmissions();
 
   if (affiliationFilter && affiliationFilter !== 'ALL') {
     if (affiliationFilter === 'DUMAS') {
