@@ -1,1 +1,51 @@
-[]
+[
+  {
+    "id": "sub_95t65nqmtm4j2sl",
+    "timestamp": "2026-09-03T22:56:02.277Z",
+    "user_affiliation": "ITAPEVI",
+    "age_bracket": "18_49",
+    "age": 30,
+    "sex": "NAO_INFORMAR",
+    "eligible_vaccines": [
+      "PNEUMO_20",
+      "COVID_19"
+    ],
+    "reasons_by_vaccine": {
+      "PNEUMO_20": [
+        "Síndrome Nefrótica",
+        "Implante coclear"
+      ],
+      "COVID_19": [
+        "Trabalhador da área da saúde",
+        "Fibrose cística",
+        "Hipertensão com lesão em órgão-alvo",
+        "Síndrome nefrótica",
+        "Esclerose múltipla",
+        "Outra hemoglobinopatia",
+        "Obesidade grau III (IMC ≥ 40)",
+        "Imunodeficiência congênita primária"
+      ]
+    },
+    "facts": {
+      "user_affiliation": "ITAPEVI",
+      "age_bracket": "18_49",
+      "age": 30,
+      "sex": "NAO_INFORMAR",
+      "is_pregnant": false,
+      "is_postpartum": false,
+      "is_health_worker": true,
+      "has_congenital_immunodeficiency": true,
+      "has_cystic_fibrosis": true,
+      "has_hypertension_target_organ": true,
+      "has_diabetes": false,
+      "has_nephrotic_syndrome": true,
+      "has_chronic_liver_disease": false,
+      "has_multiple_sclerosis": true,
+      "has_other_hemoglobinopathies": true,
+      "has_cancer": false,
+      "morbid_obesity_selection": "SIM",
+      "has_morbid_obesity_bmi_40": true,
+      "has_cochlear_implant": true
+    }
+  }
+]

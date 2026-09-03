@@ -60,7 +60,7 @@ export const VaccineResultCard: React.FC<VaccineResultCardProps> = ({ result }) 
           <span>Critérios Clínicos Identificados:</span>
         </h4>
 
-        {result.reasons.length > 0 ? (
+        {result.reasons.length > 0 && (
           <ul className="space-y-2">
             {result.reasons.map((reason, idx) => (
               <li
@@ -72,18 +72,6 @@ export const VaccineResultCard: React.FC<VaccineResultCardProps> = ({ result }) 
               </li>
             ))}
           </ul>
-        ) : (
-          <p className="text-xs text-[#AAB0C6] italic">Critério de rotina atendido conforme faixa de recomendação.</p>
-        )}
-
-        {/* AVISO ESPECÍFICO DE REEMBOLSO PRIVADO PARA VSR */}
-        {result.vaccine_code === 'VSR' && (
-          <div className="mt-2.5 p-3 sm:p-3.5 rounded-xl sm:rounded-2xl bg-[#1F1545]/90 border border-[#7B28E2]/40 text-xs text-[#E1D4F9] leading-relaxed flex items-start gap-2.5 shadow-md">
-            <Info className="w-4 h-4 text-[#B387F7] shrink-0 mt-0.5" />
-            <span>
-              Lembramos que a vacina contra o VSR e a vacina contra o Pneumococo podem ser acessadas na rede privada mediante avaliação médica, com direito a reembolso para colegas Pfizer dependentes.
-            </span>
-          </div>
         )}
       </div>
 
