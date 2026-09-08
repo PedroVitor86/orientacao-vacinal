@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const updated = updateSubmissionFeedback(id, feedback, cardUpdatedFeedback);
+    const updated = await updateSubmissionFeedback(id, feedback, cardUpdatedFeedback);
     return NextResponse.json({ success: updated });
   } catch (error) {
     console.error('Erro ao atualizar feedback de conscientização:', error);

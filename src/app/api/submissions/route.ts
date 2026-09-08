@@ -23,7 +23,7 @@ export async function POST(request: Request) {
       });
     }
 
-    const record = saveSubmission({
+    const record = await saveSubmission({
       user_affiliation: facts.user_affiliation || 'NAO_INFORMADO',
       age_bracket: facts.age_bracket || '18_49',
       age: facts.age || 30,

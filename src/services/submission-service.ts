@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import { Redis } from '@upstash/redis';
 
 export interface SubmissionRecord {
   id: string;
@@ -62,10 +63,33 @@ const IS_VERCEL = !!process.env.VERCEL;
 const DATA_DIR = IS_VERCEL ? '/tmp' : path.join(process.cwd(), 'data');
 const FILE_PATH = path.join(DATA_DIR, 'submissions.json');
 const BUNDLED_FILE_PATH = path.join(process.cwd(), 'data', 'submissions.json');
+const REDIS_KEY = 'trivax_submissions_v1';
 
 // Cache em memória para ambientes serverless
 declare global {
   var __TRIVAX_SUBMISSIONS__: SubmissionRecord[] | undefined;
+}
+
+function getRedisClient(): Redis | null {
+  const url =
+    process.env.KV_REST_API_URL ||
+    process.env.UPSTASH_REDIS_REST_URL ||
+    process.env.STORAGE_REST_API_URL ||
+    process.env.STORAGE_URL;
+  const token =
+    process.env.KV_REST_API_TOKEN ||
+    process.env.UPSTASH_REDIS_REST_TOKEN ||
+    process.env.STORAGE_REST_API_TOKEN ||
+    process.env.STORAGE_TOKEN;
+
+  if (url && token) {
+    try {
+      return new Redis({ url, token });
+    } catch (err) {
+      console.error('Erro ao conectar ao Upstash Redis:', err);
+    }
+  }
+  return null;
 }
 
 function ensureFileExists() {
@@ -88,7 +112,20 @@ function ensureFileExists() {
   }
 }
 
-function readSubmissions(): SubmissionRecord[] {
+async function readSubmissions(): Promise<SubmissionRecord[]> {
+  const redis = getRedisClient();
+  if (redis) {
+    try {
+      const data = await redis.get<SubmissionRecord[]>(REDIS_KEY);
+      if (Array.isArray(data)) {
+        globalThis.__TRIVAX_SUBMISSIONS__ = data;
+        return data;
+      }
+    } catch (err) {
+      console.error('Erro ao ler do Upstash Redis:', err);
+    }
+  }
+
   try {
     ensureFileExists();
     if (fs.existsSync(FILE_PATH)) {
@@ -103,14 +140,24 @@ function readSubmissions(): SubmissionRecord[] {
       }
     }
   } catch (err) {
-    console.error('Erro ao ler submissions.json:', err);
+    console.error('Erro ao ler submissions.json local:', err);
   }
 
   return globalThis.__TRIVAX_SUBMISSIONS__ || [];
 }
 
-function writeSubmissions(list: SubmissionRecord[]) {
+async function writeSubmissions(list: SubmissionRecord[]): Promise<void> {
   globalThis.__TRIVAX_SUBMISSIONS__ = list;
+
+  const redis = getRedisClient();
+  if (redis) {
+    try {
+      await redis.set(REDIS_KEY, list);
+    } catch (err) {
+      console.error('Erro ao gravar no Upstash Redis:', err);
+    }
+  }
+
   try {
     ensureFileExists();
     fs.writeFileSync(FILE_PATH, JSON.stringify(list, null, 2), 'utf-8');
@@ -119,8 +166,8 @@ function writeSubmissions(list: SubmissionRecord[]) {
   }
 }
 
-export function saveSubmission(data: Omit<SubmissionRecord, 'id' | 'timestamp'>): SubmissionRecord {
-  const list = readSubmissions();
+export async function saveSubmission(data: Omit<SubmissionRecord, 'id' | 'timestamp'>): Promise<SubmissionRecord> {
+  const list = await readSubmissions();
 
   const record: SubmissionRecord = {
     id: 'sub_' + Math.random().toString(36).substring(2, 9) + Date.now().toString(36),
@@ -129,25 +176,25 @@ export function saveSubmission(data: Omit<SubmissionRecord, 'id' | 'timestamp'>)
   };
 
   list.unshift(record); // adiciona no início
-  writeSubmissions(list);
+  await writeSubmissions(list);
   return record;
 }
 
-export function updateSubmissionFeedback(id: string, feedback?: string, cardUpdatedFeedback?: string): boolean {
-  const list = readSubmissions();
+export async function updateSubmissionFeedback(id: string, feedback?: string, cardUpdatedFeedback?: string): Promise<boolean> {
+  const list = await readSubmissions();
 
   const index = list.findIndex((item) => item.id === id);
   if (index !== -1) {
     if (feedback !== undefined) list[index].awareness_feedback = feedback;
     if (cardUpdatedFeedback !== undefined) list[index].card_updated_feedback = cardUpdatedFeedback;
-    writeSubmissions(list);
+    await writeSubmissions(list);
     return true;
   }
   return false;
 }
 
-export function getAllSubmissions(affiliationFilter?: string): SubmissionRecord[] {
-  const list = readSubmissions();
+export async function getAllSubmissions(affiliationFilter?: string): Promise<SubmissionRecord[]> {
+  const list = await readSubmissions();
 
   if (affiliationFilter && affiliationFilter !== 'ALL') {
     if (affiliationFilter === 'DUMAS') {
@@ -158,8 +205,8 @@ export function getAllSubmissions(affiliationFilter?: string): SubmissionRecord[
   return list;
 }
 
-export function getAnalytics(affiliationFilter?: string): AnalyticsSummary {
-  const records = getAllSubmissions(affiliationFilter);
+export async function getAnalytics(affiliationFilter?: string): Promise<AnalyticsSummary> {
+  const records = await getAllSubmissions(affiliationFilter);
   const total = records.length;
 
   const byAffiliation = { dumas: 0, itapevi: 0, forcaVendas: 0, pfizer: 0 };
@@ -321,8 +368,8 @@ function escapeCsv(str: any): string {
   return `"${text}"`;
 }
 
-export function exportSubmissionsToCSV(affiliationFilter?: string): string {
-  const records = getAllSubmissions(affiliationFilter);
+export async function exportSubmissionsToCSV(affiliationFilter?: string): Promise<string> {
+  const records = await getAllSubmissions(affiliationFilter);
 
   // CABEÇALHO COMPLETO SEPARADO POR PÁGINAS E COLUNAS
   const headers = [

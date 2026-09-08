@@ -11,7 +11,7 @@ export async function GET(request: Request) {
     const dateStr = new Date().toISOString().slice(0, 10);
 
     if (format === 'csv') {
-      const csvContent = exportSubmissionsToCSV(affiliation);
+      const csvContent = await exportSubmissionsToCSV(affiliation);
       const csvWithBom = '\uFEFF' + csvContent;
 
       return new NextResponse(csvWithBom, {

@@ -1,5 +1,60 @@
 [
   {
+    "id": "sub_qnkvvxqmtsqo8wn",
+    "timestamp": "2026-09-08T14:02:32.087Z",
+    "user_affiliation": "FORCA_DE_VENDAS",
+    "age_bracket": "18_49",
+    "age": 30,
+    "sex": "MASCULINO",
+    "eligible_vaccines": [
+      "PNEUMO_20",
+      "COVID_19"
+    ],
+    "reasons_by_vaccine": {
+      "PNEUMO_20": [
+        "Asma crônica",
+        "Cardiopatia",
+        "Doença Hepática Crônica",
+        "Quimioterapia atual ou recente",
+        "Leucemia",
+        "Neoplasia maligna ativa",
+        "Implante coclear"
+      ],
+      "COVID_19": [
+        "Indivíduo de população indígena",
+        "Asma crônica ou grave",
+        "Cardiopatia congênita",
+        "Em programa de hemodiálise",
+        "Doença hepática crônica",
+        "Esclerose Lateral Amiotrófica (ELA)",
+        "Tratamento de quimioterapia",
+        "Diagnóstico oncológico ativo"
+      ]
+    },
+    "facts": {
+      "user_affiliation": "FORCA_DE_VENDAS",
+      "age_bracket": "18_49",
+      "age": 30,
+      "sex": "MASCULINO",
+      "is_indigenous": true,
+      "has_transplant": false,
+      "has_asthma": true,
+      "has_congenital_heart_disease": true,
+      "has_diabetes": false,
+      "is_hemodialysis": true,
+      "has_chronic_liver_disease": true,
+      "has_als": true,
+      "has_other_hemoglobinopathies": false,
+      "has_leukemia": true,
+      "has_cancer": true,
+      "morbid_obesity_selection": "NAO",
+      "has_morbid_obesity_bmi_40": false,
+      "has_cochlear_implant": true,
+      "is_chemotherapy": true,
+      "status_chemotherapy": "ATUAL"
+    }
+  },
+  {
     "id": "sub_95t65nqmtm4j2sl",
     "timestamp": "2026-09-03T22:56:02.277Z",
     "user_affiliation": "ITAPEVI",

@@ -51,9 +51,105 @@ export const Footer: React.FC = () => {
           </div>
         </div>
 
+        {/* REFERÊNCIAS CIENTÍFICAS E DIRETRIZES (COMPACTO E EXPANSÍVEL) */}
+        <details className="group bg-[#0c091a]/90 border border-[#2B1C58]/80 rounded-2xl text-[#8F96B2] overflow-hidden transition-all duration-300">
+          <summary className="flex items-center justify-between p-3 sm:p-3.5 cursor-pointer hover:bg-[#150f2e] transition text-white font-bold text-[11px] sm:text-xs uppercase tracking-wider select-none list-none">
+            <span className="flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#B387F7]" />
+              <span>Referências</span>
+            </span>
+            <span className="text-[10px] text-[#B387F7] font-semibold flex items-center gap-1 group-open:rotate-180 transition-transform duration-200">
+              ▼
+            </span>
+          </summary>
+
+          <div className="p-3.5 pt-2 sm:p-4 sm:pt-2.5 border-t border-[#2B1C58]/50 grid grid-cols-1 md:grid-cols-3 gap-3 text-[10px] sm:text-[10.5px] leading-relaxed">
+            {/* COVID-19 */}
+            <div className="space-y-1.5 bg-[#120e24]/70 p-3 rounded-xl border border-[#2B1C58]/40">
+              <span className="font-bold text-[#B387F7] block text-[11px]">COVID-19</span>
+              <p>
+                BRASIL. Ministério da Saúde. Instrução normativa do Calendário Nacional de Vacinação 2025. Brasília, DF: Ministério da Saúde, 2025.{' '}
+                <a
+                  href="https://www.gov.br/saude/pt-br/vacinacao/publicacoes/instrucao-normativa-que-instrui-o-calendario-nacional-de-vacinacao-2025.pdf"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[#B387F7] hover:underline font-semibold"
+                >
+                  [Acessar documento]
+                </a>
+              </p>
+              <p>
+                BRASIL. Ministério da Saúde. Vacinação. Brasília, DF: Ministério da Saúde, [s. d.].{' '}
+                <a
+                  href="https://www.gov.br/saude/pt-br/vacinacao"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[#B387F7] hover:underline font-semibold"
+                >
+                  [Acessar portal]
+                </a>
+              </p>
+            </div>
+
+            {/* Doença pneumocócica */}
+            <div className="space-y-1.5 bg-[#120e24]/70 p-3 rounded-xl border border-[#2B1C58]/40">
+              <span className="font-bold text-[#B387F7] block text-[11px]">Doença pneumocócica</span>
+              <p>
+                SOCIEDADE BRASILEIRA DE IMUNIZAÇÕES. Doença pneumocócica (DP). Família SBIm, [s. d.].{' '}
+                <a
+                  href="https://familia.sbim.org.br/doencas/doenca-pneumococica-dp"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[#B387F7] hover:underline font-semibold"
+                >
+                  [Acessar portal]
+                </a>
+              </p>
+              <p>
+                BRASIL. Ministério da Saúde. Guia técnico para introdução da vacina pneumocócica 20-valente conjugada no PNI. Brasília, DF: Ministério da Saúde, 2026.{' '}
+                <a
+                  href="https://www.gov.br/saude/pt-br/centrais-de-conteudo/publicacoes/guias-e-manuais/2026/guia-tecnico-para-introducao-da-vacina-pneumococica-20-valente-conjugada-no-programa-nacional-de-imunizacoes.pdf"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[#B387F7] hover:underline font-semibold"
+                >
+                  [Acessar documento]
+                </a>
+              </p>
+            </div>
+
+            {/* VSR */}
+            <div className="space-y-1.5 bg-[#120e24]/70 p-3 rounded-xl border border-[#2B1C58]/40">
+              <span className="font-bold text-[#B387F7] block text-[11px]">VSR</span>
+              <p>
+                SOCIEDADE BRASILEIRA DE IMUNIZAÇÕES. Vírus sincicial respiratório (VSR). Família SBIm, [s. d.].{' '}
+                <a
+                  href="https://familia.sbim.org.br/doencas/virus-sincicial-respiratorio-vsr"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[#B387F7] hover:underline font-semibold"
+                >
+                  [Acessar portal]
+                </a>
+              </p>
+              <p>
+                SBIm; SBP; FEBRASGO. Guia rápido: imunização contra o vírus sincicial respiratório (VSR). 2026.{' '}
+                <a
+                  href="https://sbim.org.br/images/nt-guiarapido-imunizacao-vsr-sbimsbpfebrasgo-260304.pdf_2026-03-04.pdf"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[#B387F7] hover:underline font-semibold"
+                >
+                  [Acessar documento]
+                </a>
+              </p>
+            </div>
+          </div>
+        </details>
+
         {/* COPYRIGHT E ADMIN */}
         <div className="flex flex-col sm:flex-row justify-between items-center gap-2.5 pt-1 text-[10px] sm:text-[11px] text-[#AAB0C6]/80 text-center sm:text-left">
-          <p>© {new Date().getFullYear()} TRIVAX • Todos os direitos reservados.</p>
+          <p>© {new Date().getFullYear()} TRIVAX</p>
           <div className="flex items-center gap-3">
             <span>Diretrizes de sociedade científica</span>
             <span>•</span>

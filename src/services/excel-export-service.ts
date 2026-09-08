@@ -69,8 +69,8 @@ function applyDataStyle(row: ExcelJS.Row, isEven = false) {
 }
 
 export async function generateExcelWorkbook(affiliationFilter?: string): Promise<Buffer> {
-  const records = getAllSubmissions(affiliationFilter);
-  const analytics = getAnalytics(affiliationFilter);
+  const records = await getAllSubmissions(affiliationFilter);
+  const analytics = await getAnalytics(affiliationFilter);
 
   const workbook = new ExcelJS.Workbook();
   workbook.creator = 'TRIVAX • Plataforma de Orientação Vacinal';
