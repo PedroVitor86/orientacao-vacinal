@@ -6,51 +6,35 @@
     "description": "Proteção contra 20 sorotipos de Streptococcus pneumoniae causadores de pneumonia e meningite.",
     "conditions": {
       "any": [
-        {
-          "fact": "age",
-          "operator": "greaterThanInclusive",
-          "value": 50,
-          "reason": "Recomendação universal para adultos a partir de 50 anos"
-        },
-        {
-          "all": [
-            { "fact": "age", "operator": "greaterThanInclusive", "value": 18 },
-            { "fact": "age", "operator": "lessThanInclusive", "value": 49 },
-            {
-              "any": [
-                { "fact": "has_diabetes", "operator": "equal", "value": true, "reason": "Diabetes Mellitus" },
-                { "fact": "has_asthma", "operator": "equal", "value": true, "reason": "Asma crônica" },
-                { "fact": "has_copd", "operator": "equal", "value": true, "reason": "Doença Pulmonar Obstrutiva Crônica (DPOC)" },
-                { "fact": "has_emphysema", "operator": "equal", "value": true, "reason": "Enfisema pulmonar" },
-                { "fact": "has_pulmonary_fibrosis", "operator": "equal", "value": true, "reason": "Fibrose pulmonar" },
-                { "fact": "has_other_chronic_lung", "operator": "equal", "value": true, "reason": "Doença pulmonar crônica" },
-                { "fact": "has_heart_failure", "operator": "equal", "value": true, "reason": "Insuficiência Cardíaca" },
-                { "fact": "has_coronary_disease", "operator": "equal", "value": true, "reason": "Doença Arterial Coronariana" },
-                { "fact": "has_congenital_heart_disease", "operator": "equal", "value": true, "reason": "Cardiopatia" },
-                { "fact": "has_other_cardiovascular", "operator": "equal", "value": true, "reason": "Doença cardiovascular crônica" },
-                { "fact": "has_chronic_kidney_disease", "operator": "equal", "value": true, "reason": "Doença Renal Crônica" },
-                { "fact": "has_nephrotic_syndrome", "operator": "equal", "value": true, "reason": "Síndrome Nefrótica" },
-                { "fact": "has_chronic_liver_disease", "operator": "equal", "value": true, "reason": "Doença Hepática Crônica" },
-                { "fact": "has_hiv_aids", "operator": "equal", "value": true, "reason": "HIV/AIDS" },
-                { "fact": "uses_immunosuppressants", "operator": "equal", "value": true, "reason": "Uso crônico de imunossupressores" },
-                { "fact": "is_chemotherapy", "operator": "equal", "value": true, "reason": "Quimioterapia atual ou recente" },
-                { "fact": "is_radiotherapy", "operator": "equal", "value": true, "reason": "Radioterapia atual ou recente" },
-                { "fact": "has_transplant", "operator": "equal", "value": true, "reason": "Transplante de órgãos sólidos ou medula" },
-                { "fact": "has_other_immunosuppression", "operator": "equal", "value": true, "reason": "Outra condição que compromete o sistema imunológico" },
-                { "fact": "has_sickle_cell", "operator": "equal", "value": true, "reason": "Anemia Falciforme" },
-                { "fact": "has_thalassemia", "operator": "equal", "value": true, "reason": "Talassemia" },
-                { "fact": "has_leukemia", "operator": "equal", "value": true, "reason": "Leucemia" },
-                { "fact": "has_lymphoma", "operator": "equal", "value": true, "reason": "Linfoma" },
-                { "fact": "has_multiple_myeloma", "operator": "equal", "value": true, "reason": "Mieloma Múltiplo" },
-                { "fact": "has_hodgkin_disease", "operator": "equal", "value": true, "reason": "Doença de Hodgkin" },
-                { "fact": "has_cancer", "operator": "equal", "value": true, "reason": "Neoplasia maligna ativa" },
-                { "fact": "has_asplenia", "operator": "equal", "value": true, "reason": "Asplenia anatômica ou funcional (ausência ou disfunção do baço)" },
-                { "fact": "has_cochlear_implant", "operator": "equal", "value": true, "reason": "Implante coclear" },
-                { "fact": "has_csf_leak", "operator": "equal", "value": true, "reason": "Fístula liquórica (comunicação com líquido cefalorraquidiano)" }
-              ]
-            }
-          ]
-        }
+        { "fact": "has_diabetes", "operator": "equal", "value": true, "reason": "Diabetes Mellitus" },
+        { "fact": "has_asthma", "operator": "equal", "value": true, "reason": "Asma crônica" },
+        { "fact": "has_copd", "operator": "equal", "value": true, "reason": "Doença Pulmonar Obstrutiva Crônica (DPOC)" },
+        { "fact": "has_emphysema", "operator": "equal", "value": true, "reason": "Enfisema pulmonar" },
+        { "fact": "has_pulmonary_fibrosis", "operator": "equal", "value": true, "reason": "Fibrose pulmonar" },
+        { "fact": "has_other_chronic_lung", "operator": "equal", "value": true, "reason": "Doença pulmonar crônica" },
+        { "fact": "has_heart_failure", "operator": "equal", "value": true, "reason": "Insuficiência Cardíaca" },
+        { "fact": "has_coronary_disease", "operator": "equal", "value": true, "reason": "Doença Arterial Coronariana" },
+        { "fact": "has_congenital_heart_disease", "operator": "equal", "value": true, "reason": "Cardiopatia" },
+        { "fact": "has_other_cardiovascular", "operator": "equal", "value": true, "reason": "Doença cardiovascular crônica" },
+        { "fact": "has_chronic_kidney_disease", "operator": "equal", "value": true, "reason": "Doença Renal Crônica" },
+        { "fact": "has_nephrotic_syndrome", "operator": "equal", "value": true, "reason": "Síndrome Nefrótica" },
+        { "fact": "has_chronic_liver_disease", "operator": "equal", "value": true, "reason": "Doença Hepática Crônica" },
+        { "fact": "has_hiv_aids", "operator": "equal", "value": true, "reason": "HIV/AIDS" },
+        { "fact": "uses_immunosuppressants", "operator": "equal", "value": true, "reason": "Uso crônico de imunossupressores" },
+        { "fact": "is_chemotherapy", "operator": "equal", "value": true, "reason": "Quimioterapia atual ou recente" },
+        { "fact": "is_radiotherapy", "operator": "equal", "value": true, "reason": "Radioterapia atual ou recente" },
+        { "fact": "has_transplant", "operator": "equal", "value": true, "reason": "Transplante de órgãos sólidos ou medula" },
+        { "fact": "has_other_immunosuppression", "operator": "equal", "value": true, "reason": "Outra condição que compromete o sistema imunológico" },
+        { "fact": "has_sickle_cell", "operator": "equal", "value": true, "reason": "Anemia Falciforme" },
+        { "fact": "has_thalassemia", "operator": "equal", "value": true, "reason": "Talassemia" },
+        { "fact": "has_leukemia", "operator": "equal", "value": true, "reason": "Leucemia" },
+        { "fact": "has_lymphoma", "operator": "equal", "value": true, "reason": "Linfoma" },
+        { "fact": "has_multiple_myeloma", "operator": "equal", "value": true, "reason": "Mieloma Múltiplo" },
+        { "fact": "has_hodgkin_disease", "operator": "equal", "value": true, "reason": "Doença de Hodgkin" },
+        { "fact": "has_cancer", "operator": "equal", "value": true, "reason": "Neoplasia maligna ativa" },
+        { "fact": "has_asplenia", "operator": "equal", "value": true, "reason": "Asplenia anatômica ou funcional (ausência ou disfunção do baço)" },
+        { "fact": "has_cochlear_implant", "operator": "equal", "value": true, "reason": "Implante coclear" },
+        { "fact": "has_csf_leak", "operator": "equal", "value": true, "reason": "Fístula liquórica (comunicação com líquido cefalorraquidiano)" }
       ]
     }
   },
@@ -64,6 +48,7 @@
         { "fact": "is_ilpi_resident", "operator": "equal", "value": true, "reason": "Residente em instituição de longa permanência (ILPI)" },
         { "fact": "is_ilpi_worker", "operator": "equal", "value": true, "reason": "Trabalhador de instituição de longa permanência (ILPI)" },
         { "fact": "is_health_worker", "operator": "equal", "value": true, "reason": "Trabalhador da área da saúde" },
+        { "fact": "is_pregnant", "operator": "equal", "value": true, "reason": "Gestante" },
         { "fact": "is_postpartum", "operator": "equal", "value": true, "reason": "Puérpera (mulher em período pós-parto)" },
         { "fact": "is_indigenous", "operator": "equal", "value": true, "reason": "Indivíduo de população indígena" },
         { "fact": "is_riverine", "operator": "equal", "value": true, "reason": "Comunidade tradicional ribeirinha" },
@@ -128,6 +113,12 @@
           "reason": "Gestante a partir de 24 semanas de gestação (proteção passiva contra bronquiolite no bebê)"
         },
         {
+          "fact": "has_diabetes",
+          "operator": "equal",
+          "value": true,
+          "reason": "Diabetes Mellitus"
+        },
+        {
           "fact": "age",
           "operator": "greaterThanInclusive",
           "value": 75,
@@ -139,7 +130,6 @@
             { "fact": "age", "operator": "lessThanInclusive", "value": 74 },
             {
               "any": [
-                { "fact": "has_diabetes", "operator": "equal", "value": true, "reason": "Idade entre 50 e 74 anos com Diabetes" },
                 { "fact": "has_morbid_obesity_bmi_40", "operator": "equal", "value": true, "reason": "Idade entre 50 e 74 anos com Obesidade severa (IMC ≥ 40)" },
                 { "fact": "has_asthma", "operator": "equal", "value": true, "reason": "Idade entre 50 e 74 anos com Asma" },
                 { "fact": "has_copd", "operator": "equal", "value": true, "reason": "Idade entre 50 e 74 anos com DPOC" },

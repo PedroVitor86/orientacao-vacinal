@@ -149,7 +149,7 @@ export default function QuestionnairePage() {
       {/* GLOW DE FUNDO */}
       <div className="absolute top-10 left-1/2 -translate-x-1/2 w-[320px] sm:w-[700px] h-[250px] sm:h-[350px] bg-gradient-to-tr from-[#7B28E2]/20 to-[#2D67FF]/20 blur-[100px] sm:blur-[130px] pointer-events-none -z-10" />
 
-      <Navbar showReset={true} onReset={resetQuiz} />
+      <Navbar />
 
       <main className="flex-1 max-w-3xl w-full mx-auto px-3.5 sm:px-6 py-5 sm:py-10 space-y-4 sm:space-y-6">
         {/* BARRA DE PROGRESSO TRIVAX */}

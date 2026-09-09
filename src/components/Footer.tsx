@@ -116,6 +116,17 @@ export const Footer: React.FC = () => {
                   [Acessar documento]
                 </a>
               </p>
+              <p>
+                BRASIL. Ministério da Saúde. Nota Técnica nº 45/2026-CGICI/DPNI/SVSA/MS: diretrizes para o uso da vacina pneumocócica conjugada 20-valente (VPC20) em estratégias especiais no SUS. Brasília, DF: Ministério da Saúde, 2026.{' '}
+                <a
+                  href="https://www.gov.br/saude/pt-br/centrais-de-conteudo/publicacoes/notas-tecnicas/2026/nota-tecnica-no-45-2026-cgici-dpni-svsa-ms.pdf/view"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[#B387F7] hover:underline font-semibold"
+                >
+                  [Acessar documento]
+                </a>
+              </p>
             </div>
 
             {/* VSR */}

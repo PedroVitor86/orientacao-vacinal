@@ -3,14 +3,17 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { RotateCcw, ArrowRight } from 'lucide-react';
+import { usePathname } from 'next/navigation';
+import { ArrowRight } from 'lucide-react';
 
 interface NavbarProps {
   onReset?: () => void;
   showReset?: boolean;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({ onReset, showReset = false }) => {
+export const Navbar: React.FC<NavbarProps> = ({ onReset }) => {
+  const pathname = usePathname();
+
   return (
     <header className="sticky top-0 z-50 bg-[#080612]/95 backdrop-blur-xl border-b border-[#2B1C58]/60 shadow-xl">
       <div className="max-w-6xl mx-auto px-3.5 sm:px-6 h-16 sm:h-20 flex items-center justify-between gap-2">
@@ -57,18 +60,9 @@ export const Navbar: React.FC<NavbarProps> = ({ onReset, showReset = false }) =>
           </Link>
         </nav>
 
-        {/* AÇÕES (RECOMEÇAR OU COMEÇAR) */}
-        <div className="flex items-center gap-2 shrink-0">
-          {showReset && onReset ? (
-            <button
-              onClick={onReset}
-              className="flex items-center gap-1 sm:gap-1.5 text-[11px] sm:text-xs font-semibold text-[#AAB0C6] hover:text-white bg-[#130E2A] hover:bg-[#2B1C58] px-3 py-1.5 sm:px-4 sm:py-2 rounded-full border border-[#2B1C58] transition"
-              title="Reiniciar Questionário"
-            >
-              <RotateCcw className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#B387F7]" />
-              <span className="hidden xs:inline">Recomeçar</span>
-            </button>
-          ) : (
+        {/* AÇÕES (COMEÇAR APENAS SE FORA DO QUESTIONÁRIO) */}
+        {pathname !== '/questionario' && (
+          <div className="flex items-center gap-2 shrink-0">
             <Link
               href="/questionario"
               className="inline-flex items-center gap-1.5 px-3.5 py-1.5 sm:px-5 sm:py-2.5 rounded-full bg-gradient-to-r from-[#7B28E2] to-[#2D67FF] text-white text-xs font-bold hover:opacity-90 transition shadow-md shadow-[#7B28E2]/30"
@@ -76,8 +70,8 @@ export const Navbar: React.FC<NavbarProps> = ({ onReset, showReset = false }) =>
               <span>Começar</span>
               <ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
             </Link>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </header>
   );
