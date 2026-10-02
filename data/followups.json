@@ -1,0 +1,376 @@
+[
+  {
+    "id": "fup_wgrfzu2murjraeh",
+    "timestamp": "2026-10-02T22:40:52.841Z",
+    "participated": "NAO"
+  },
+  {
+    "id": "fup_3zdt1jmmurjgxaq",
+    "timestamp": "2026-10-02T22:32:49.298Z",
+    "participated": "SIM",
+    "sought_center": "NAO"
+  },
+  {
+    "id": "fup_2sbvm30murjguvm",
+    "timestamp": "2026-10-02T22:32:46.162Z",
+    "participated": "SIM",
+    "sought_center": "SIM"
+  },
+  {
+    "id": "fup_ppmzim9muriwjgl",
+    "timestamp": "2026-10-02T22:16:58.245Z",
+    "participated": "NAO"
+  },
+  {
+    "id": "fup_0snk0gdmuriw5eh",
+    "timestamp": "2026-10-02T22:16:40.025Z",
+    "participated": "SIM",
+    "sought_center": "NAO"
+  },
+  {
+    "id": "fup_vfyzrn0muriw59b",
+    "timestamp": "2026-10-02T22:16:39.839Z",
+    "participated": "SIM",
+    "sought_center": "NAO"
+  },
+  {
+    "id": "fup_h4blohtmuriw53i",
+    "timestamp": "2026-10-02T22:16:39.630Z",
+    "participated": "SIM",
+    "sought_center": "NAO"
+  },
+  {
+    "id": "fup_24r98nwmuriw4y8",
+    "timestamp": "2026-10-02T22:16:39.440Z",
+    "participated": "SIM",
+    "sought_center": "NAO"
+  },
+  {
+    "id": "fup_lrienmtmuriw4hd",
+    "timestamp": "2026-10-02T22:16:38.833Z",
+    "participated": "SIM",
+    "sought_center": "NAO"
+  },
+  {
+    "id": "fup_mza3m53muriw15k",
+    "timestamp": "2026-10-02T22:16:34.520Z",
+    "participated": "SIM",
+    "sought_center": "NAO"
+  },
+  {
+    "id": "fup_uk8fjyumurivfud",
+    "timestamp": "2026-10-02T22:16:06.901Z",
+    "participated": "SIM",
+    "sought_center": "SIM"
+  },
+  {
+    "id": "fup_qll7viymurivf0s",
+    "timestamp": "2026-10-02T22:16:05.836Z",
+    "participated": "SIM",
+    "sought_center": "SIM"
+  },
+  {
+    "id": "fup_wyb6ezwmurivenr",
+    "timestamp": "2026-10-02T22:16:05.367Z",
+    "participated": "SIM",
+    "sought_center": "SIM"
+  },
+  {
+    "id": "fup_w2z0noimuriv9c6",
+    "timestamp": "2026-10-02T22:15:58.470Z",
+    "participated": "SIM",
+    "sought_center": "SIM"
+  },
+  {
+    "id": "fup_sy125xqmuriv97b",
+    "timestamp": "2026-10-02T22:15:58.295Z",
+    "participated": "SIM",
+    "sought_center": "SIM"
+  },
+  {
+    "id": "fup_5ni1qghmuriv935",
+    "timestamp": "2026-10-02T22:15:58.145Z",
+    "participated": "SIM",
+    "sought_center": "SIM"
+  },
+  {
+    "id": "fup_w63e2bcmuriv8ya",
+    "timestamp": "2026-10-02T22:15:57.970Z",
+    "participated": "SIM",
+    "sought_center": "SIM"
+  },
+  {
+    "id": "fup_lcc5mu2muriv8u1",
+    "timestamp": "2026-10-02T22:15:57.817Z",
+    "participated": "SIM",
+    "sought_center": "SIM"
+  },
+  {
+    "id": "fup_ain8xxgmuriv8p1",
+    "timestamp": "2026-10-02T22:15:57.637Z",
+    "participated": "SIM",
+    "sought_center": "SIM"
+  },
+  {
+    "id": "fup_gttgx2kmuriv8kw",
+    "timestamp": "2026-10-02T22:15:57.488Z",
+    "participated": "SIM",
+    "sought_center": "SIM"
+  },
+  {
+    "id": "fup_fh6ozuhmuriv60i",
+    "timestamp": "2026-10-02T22:15:54.162Z",
+    "participated": "SIM",
+    "sought_center": "SIM"
+  },
+  {
+    "id": "fup_yxevtromuriv5wb",
+    "timestamp": "2026-10-02T22:15:54.011Z",
+    "participated": "SIM",
+    "sought_center": "SIM"
+  },
+  {
+    "id": "fup_4vhjmj9muriv5rl",
+    "timestamp": "2026-10-02T22:15:53.841Z",
+    "participated": "SIM",
+    "sought_center": "SIM"
+  },
+  {
+    "id": "fup_zj4ehe3muriv5mx",
+    "timestamp": "2026-10-02T22:15:53.673Z",
+    "participated": "SIM",
+    "sought_center": "SIM"
+  },
+  {
+    "id": "fup_ba4w5f3muriv5i8",
+    "timestamp": "2026-10-02T22:15:53.504Z",
+    "participated": "SIM",
+    "sought_center": "SIM"
+  },
+  {
+    "id": "fup_eo9qi9rmuriv5df",
+    "timestamp": "2026-10-02T22:15:53.331Z",
+    "participated": "SIM",
+    "sought_center": "SIM"
+  },
+  {
+    "id": "fup_freh79umuriu4sj",
+    "timestamp": "2026-10-02T22:15:05.923Z",
+    "participated": "SIM",
+    "sought_center": "SIM"
+  },
+  {
+    "id": "fup_biu0j1pmuriu4lt",
+    "timestamp": "2026-10-02T22:15:05.681Z",
+    "participated": "SIM",
+    "sought_center": "SIM"
+  },
+  {
+    "id": "fup_7a1cpp9muriu38z",
+    "timestamp": "2026-10-02T22:15:03.923Z",
+    "participated": "SIM",
+    "sought_center": "SIM"
+  },
+  {
+    "id": "fup_n2bua4rmuriu2v7",
+    "timestamp": "2026-10-02T22:15:03.427Z",
+    "participated": "SIM",
+    "sought_center": "SIM"
+  },
+  {
+    "id": "fup_z37uzsomuriu2hx",
+    "timestamp": "2026-10-02T22:15:02.949Z",
+    "participated": "SIM",
+    "sought_center": "SIM"
+  },
+  {
+    "id": "fup_ja5nzppmuriu2ci",
+    "timestamp": "2026-10-02T22:15:02.754Z",
+    "participated": "SIM",
+    "sought_center": "SIM"
+  },
+  {
+    "id": "fup_zw436rjmurityi1",
+    "timestamp": "2026-10-02T22:14:57.769Z",
+    "participated": "SIM",
+    "sought_center": "SIM"
+  },
+  {
+    "id": "fup_x12bfvlmuritybr",
+    "timestamp": "2026-10-02T22:14:57.543Z",
+    "participated": "SIM",
+    "sought_center": "SIM"
+  },
+  {
+    "id": "fup_axwlovhmurity68",
+    "timestamp": "2026-10-02T22:14:57.344Z",
+    "participated": "SIM",
+    "sought_center": "SIM"
+  },
+  {
+    "id": "fup_e8rd18gmuritxzm",
+    "timestamp": "2026-10-02T22:14:57.106Z",
+    "participated": "SIM",
+    "sought_center": "SIM"
+  },
+  {
+    "id": "fup_mvdwaqnmuritxtx",
+    "timestamp": "2026-10-02T22:14:56.901Z",
+    "participated": "SIM",
+    "sought_center": "SIM"
+  },
+  {
+    "id": "fup_vha44grmuritxo3",
+    "timestamp": "2026-10-02T22:14:56.691Z",
+    "participated": "SIM",
+    "sought_center": "SIM"
+  },
+  {
+    "id": "fup_rgzctqdmuritxi0",
+    "timestamp": "2026-10-02T22:14:56.472Z",
+    "participated": "SIM",
+    "sought_center": "SIM"
+  },
+  {
+    "id": "fup_ziv6dfcmuritxc0",
+    "timestamp": "2026-10-02T22:14:56.256Z",
+    "participated": "SIM",
+    "sought_center": "SIM"
+  },
+  {
+    "id": "fup_8j6y1xjmuritx5v",
+    "timestamp": "2026-10-02T22:14:56.035Z",
+    "participated": "SIM",
+    "sought_center": "SIM"
+  },
+  {
+    "id": "fup_u8pz4utmuritx0f",
+    "timestamp": "2026-10-02T22:14:55.839Z",
+    "participated": "SIM",
+    "sought_center": "SIM"
+  },
+  {
+    "id": "fup_xxfn6m1muritwur",
+    "timestamp": "2026-10-02T22:14:55.635Z",
+    "participated": "SIM",
+    "sought_center": "SIM"
+  },
+  {
+    "id": "fup_qwx3uqlmuritwpa",
+    "timestamp": "2026-10-02T22:14:55.438Z",
+    "participated": "SIM",
+    "sought_center": "SIM"
+  },
+  {
+    "id": "fup_og4lciqmuritwjg",
+    "timestamp": "2026-10-02T22:14:55.228Z",
+    "participated": "SIM",
+    "sought_center": "SIM"
+  },
+  {
+    "id": "fup_usave9lmuritwdl",
+    "timestamp": "2026-10-02T22:14:55.017Z",
+    "participated": "SIM",
+    "sought_center": "SIM"
+  },
+  {
+    "id": "fup_9nfhbycmuritw8d",
+    "timestamp": "2026-10-02T22:14:54.829Z",
+    "participated": "SIM",
+    "sought_center": "SIM"
+  },
+  {
+    "id": "fup_bn0fqfimuritw26",
+    "timestamp": "2026-10-02T22:14:54.606Z",
+    "participated": "SIM",
+    "sought_center": "SIM"
+  },
+  {
+    "id": "fup_hm4wealmuritvvr",
+    "timestamp": "2026-10-02T22:14:54.375Z",
+    "participated": "SIM",
+    "sought_center": "SIM"
+  },
+  {
+    "id": "fup_fduxlpemuritvpn",
+    "timestamp": "2026-10-02T22:14:54.155Z",
+    "participated": "SIM",
+    "sought_center": "SIM"
+  },
+  {
+    "id": "fup_dhir9kgmuritvjp",
+    "timestamp": "2026-10-02T22:14:53.941Z",
+    "participated": "SIM",
+    "sought_center": "SIM"
+  },
+  {
+    "id": "fup_8jfzm28muritvdt",
+    "timestamp": "2026-10-02T22:14:53.729Z",
+    "participated": "SIM",
+    "sought_center": "SIM"
+  },
+  {
+    "id": "fup_pqj6bwnmuritv8i",
+    "timestamp": "2026-10-02T22:14:53.538Z",
+    "participated": "SIM",
+    "sought_center": "SIM"
+  },
+  {
+    "id": "fup_lt6fs60muritv2m",
+    "timestamp": "2026-10-02T22:14:53.326Z",
+    "participated": "SIM",
+    "sought_center": "SIM"
+  },
+  {
+    "id": "fup_uk7srnsmurituwi",
+    "timestamp": "2026-10-02T22:14:53.106Z",
+    "participated": "SIM",
+    "sought_center": "SIM"
+  },
+  {
+    "id": "fup_2b0mx4kmurituqa",
+    "timestamp": "2026-10-02T22:14:52.882Z",
+    "participated": "SIM",
+    "sought_center": "SIM"
+  },
+  {
+    "id": "fup_1ctuqsxmuritu0g",
+    "timestamp": "2026-10-02T22:14:51.952Z",
+    "participated": "SIM",
+    "sought_center": "SIM"
+  },
+  {
+    "id": "fup_rho3i24murits16",
+    "timestamp": "2026-10-02T22:14:49.386Z",
+    "participated": "SIM",
+    "sought_center": "SIM"
+  },
+  {
+    "id": "fup_2jcgha4murit6by",
+    "timestamp": "2026-10-02T22:14:21.262Z",
+    "participated": "SIM",
+    "sought_center": "SIM"
+  },
+  {
+    "id": "fup_k43ypeymuriqllj",
+    "timestamp": "2026-10-02T22:12:21.079Z",
+    "participated": "SIM",
+    "sought_center": "NAO"
+  },
+  {
+    "id": "fup_c2oza9umuripo49",
+    "timestamp": "2026-10-02T22:11:37.689Z",
+    "participated": "NAO"
+  },
+  {
+    "id": "fup_m9u5k86murip2vb",
+    "timestamp": "2026-10-02T22:11:10.151Z",
+    "participated": "SIM",
+    "sought_center": "NAO"
+  },
+  {
+    "id": "fup_o7dcqg8murioy55",
+    "timestamp": "2026-10-02T22:11:04.025Z",
+    "participated": "NAO"
+  }
+]

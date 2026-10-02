@@ -16,7 +16,9 @@ import {
   CheckCircle2,
   AlertCircle,
   Lock,
-  LogOut
+  LogOut,
+  MailCheck,
+  ExternalLink
 } from 'lucide-react';
 import { AnalyticsSummary } from '@/services/submission-service';
 
@@ -48,6 +50,14 @@ const EMPTY_ANALYTICS: AnalyticsSummary = {
   },
   topConditions: [],
   recentSubmissions: [],
+  followUpStats: {
+    total: 0,
+    participatedSim: 0,
+    participatedNao: 0,
+    soughtCenterSim: 0,
+    soughtCenterNao: 0,
+    conversionRate: 0,
+  },
 };
 
 export default function AdminPage() {
@@ -424,6 +434,88 @@ export default function AdminPage() {
                   style={{ width: `${data?.awarenessStats?.parcialPercentage ?? 0}%` }}
                 />
               </div>
+            </div>
+          </div>
+        </div>
+
+        {/* BLOCO DE ACOMPANHAMENTO PÓS-PESQUISA (E-MAIL DE SEGUIMENTO) */}
+        <div className="bg-[#120E24] rounded-2xl sm:rounded-3xl border border-[#2B1C58] p-5 sm:p-8 shadow-xl space-y-5">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#2B1C58] pb-4">
+            <div className="space-y-1">
+              <div className="flex items-center gap-2">
+                <MailCheck className="w-5 h-5 text-[#B387F7]" />
+                <h2 className="text-base sm:text-lg font-black text-white">
+                  Acompanhamento Pós-Pesquisa (Campanha de E-mail)
+                </h2>
+              </div>
+              <p className="text-xs text-[#AAB0C6]">
+                Monitoramento das respostas enviadas pelos colaboradores no e-mail de seguimento.
+              </p>
+            </div>
+            <Link
+              href="/acompanhamento"
+              target="_blank"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#1A1336] hover:bg-[#251A4F] text-[#B387F7] hover:text-white border border-[#7B28E2]/40 text-xs font-bold transition w-fit"
+            >
+              <span>Abrir tela pública</span>
+              <ExternalLink className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+            {/* TOTAL DE RESPOSTAS */}
+            <div className="bg-[#1A1336] p-4 rounded-2xl border border-[#2B1C58] space-y-1">
+              <span className="text-[11px] font-bold text-[#AAB0C6] uppercase">Respostas Totais</span>
+              <p className="text-2xl sm:text-3xl font-black text-white">
+                {data?.followUpStats?.total ?? 0}
+              </p>
+              <p className="text-[10px] text-[#AAB0C6]">Recebidas pelo link</p>
+            </div>
+
+            {/* JÁ PARTICIPARAM DA TRIVAX */}
+            <div className="bg-[#1A1336] p-4 rounded-2xl border border-[#2B1C58] space-y-1">
+              <span className="text-[11px] font-bold text-[#AAB0C6] uppercase">Já Participaram</span>
+              <p className="text-2xl sm:text-3xl font-black text-[#B387F7]">
+                {data?.followUpStats?.participatedSim ?? 0}
+              </p>
+              <p className="text-[10px] text-[#AAB0C6]">
+                {data?.followUpStats?.total ? Math.round(((data.followUpStats.participatedSim || 0) / data.followUpStats.total) * 100) : 0}% dos respondentes
+              </p>
+            </div>
+
+            {/* BUSCARAM CENTRO VACINAL */}
+            <div className="bg-[#1A1336] p-4 rounded-2xl border border-[#2B1C58] space-y-1">
+              <span className="text-[11px] font-bold text-[#AAB0C6] uppercase">Buscaram Vacinação</span>
+              <p className="text-2xl sm:text-3xl font-black text-emerald-400">
+                {data?.followUpStats?.soughtCenterSim ?? 0}
+              </p>
+              <p className="text-[10px] text-[#AAB0C6]">Foram a UBS / rede privada</p>
+            </div>
+
+            {/* TAXA DE CONVERSÃO PRÁTICA */}
+            <div className="bg-[#1A1336] p-4 rounded-2xl border border-[#2B1C58] space-y-1">
+              <span className="text-[11px] font-bold text-[#AAB0C6] uppercase">Taxa de Conversão</span>
+              <p className="text-2xl sm:text-3xl font-black text-[#2D67FF]">
+                {data?.followUpStats?.conversionRate ?? 0}%
+              </p>
+              <p className="text-[10px] text-[#AAB0C6]">Ida efetiva pós-pesquisa</p>
+            </div>
+          </div>
+
+          {/* DETALHAMENTO DE DIRECIONAMENTO E CONSCIENTIZAÇÃO */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+            <div className="bg-[#0D091D] p-3.5 rounded-xl border border-[#2B1C58]/70 flex justify-between items-center">
+              <span className="text-[#AAB0C6]">Não participaram antes e receberam convite para avaliar:</span>
+              <span className="font-bold text-white bg-[#1A1336] px-2 py-0.5 rounded border border-[#2B1C58]">
+                {data?.followUpStats?.participatedNao ?? 0}
+              </span>
+            </div>
+
+            <div className="bg-[#0D091D] p-3.5 rounded-xl border border-[#2B1C58]/70 flex justify-between items-center">
+              <span className="text-[#AAB0C6]">Participaram mas ainda não buscaram (receberam conscientização):</span>
+              <span className="font-bold text-amber-400 bg-[#1A1336] px-2 py-0.5 rounded border border-[#2B1C58]">
+                {data?.followUpStats?.soughtCenterNao ?? 0}
+              </span>
             </div>
           </div>
         </div>

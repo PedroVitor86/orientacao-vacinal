@@ -57,17 +57,37 @@ export interface AnalyticsSummary {
     vaccines: string[];
     awareness_feedback?: string;
   }[];
+  followUpStats?: FollowUpSummary;
+}
+
+export interface FollowUpRecord {
+  id: string;
+  timestamp: string;
+  participated: 'SIM' | 'NAO';
+  sought_center?: 'SIM' | 'NAO';
+}
+
+export interface FollowUpSummary {
+  total: number;
+  participatedSim: number;
+  participatedNao: number;
+  soughtCenterSim: number;
+  soughtCenterNao: number;
+  conversionRate: number;
 }
 
 const IS_VERCEL = !!process.env.VERCEL;
 const DATA_DIR = IS_VERCEL ? '/tmp' : path.join(process.cwd(), 'data');
 const FILE_PATH = path.join(DATA_DIR, 'submissions.json');
+const FOLLOWUP_FILE_PATH = path.join(DATA_DIR, 'followups.json');
 const BUNDLED_FILE_PATH = path.join(process.cwd(), 'data', 'submissions.json');
 const REDIS_KEY = 'trivax_submissions_v1';
+const REDIS_FOLLOWUP_KEY = 'trivax_followups_v1';
 
 // Cache em memória para ambientes serverless
 declare global {
   var __TRIVAX_SUBMISSIONS__: SubmissionRecord[] | undefined;
+  var __TRIVAX_FOLLOWUPS__: FollowUpRecord[] | undefined;
 }
 
 function getRedisClient(): Redis | null {
@@ -346,6 +366,7 @@ export async function getAnalytics(affiliationFilter?: string): Promise<Analytic
     },
     topConditions,
     recentSubmissions,
+    followUpStats: await getFollowUpAnalytics(),
   };
 }
 
@@ -537,4 +558,101 @@ export async function exportSubmissionsToCSV(affiliationFilter?: string): Promis
   });
 
   return [headers.map(escapeCsv).join(';'), ...rows].join('\r\n');
+}
+
+async function readFollowUps(): Promise<FollowUpRecord[]> {
+  const redis = getRedisClient();
+  if (redis) {
+    try {
+      const data = await redis.get<FollowUpRecord[]>(REDIS_FOLLOWUP_KEY);
+      if (Array.isArray(data)) {
+        globalThis.__TRIVAX_FOLLOWUPS__ = data;
+        return data;
+      }
+    } catch (err) {
+      console.error('Erro ao ler followups do Upstash Redis:', err);
+    }
+  }
+
+  try {
+    if (!fs.existsSync(DATA_DIR)) {
+      fs.mkdirSync(DATA_DIR, { recursive: true });
+    }
+    if (fs.existsSync(FOLLOWUP_FILE_PATH)) {
+      const raw = fs.readFileSync(FOLLOWUP_FILE_PATH, 'utf-8');
+      const clean = (raw || '').replace(/^\uFEFF/, '').trim();
+      if (clean) {
+        const parsed = JSON.parse(clean);
+        if (Array.isArray(parsed)) {
+          globalThis.__TRIVAX_FOLLOWUPS__ = parsed;
+          return parsed;
+        }
+      }
+    }
+  } catch (err) {
+    console.error('Erro ao ler followups local:', err);
+  }
+
+  return globalThis.__TRIVAX_FOLLOWUPS__ || [];
+}
+
+async function writeFollowUps(list: FollowUpRecord[]): Promise<void> {
+  globalThis.__TRIVAX_FOLLOWUPS__ = list;
+
+  const redis = getRedisClient();
+  if (redis) {
+    try {
+      await redis.set(REDIS_FOLLOWUP_KEY, list);
+    } catch (err) {
+      console.error('Erro ao gravar followups no Upstash Redis:', err);
+    }
+  }
+
+  try {
+    if (!fs.existsSync(DATA_DIR)) {
+      fs.mkdirSync(DATA_DIR, { recursive: true });
+    }
+    fs.writeFileSync(FOLLOWUP_FILE_PATH, JSON.stringify(list, null, 2), 'utf-8');
+  } catch (err) {
+    console.error('Erro ao gravar followups.json:', err);
+  }
+}
+
+export async function saveFollowUpSubmission(data: Omit<FollowUpRecord, 'id' | 'timestamp'>): Promise<FollowUpRecord> {
+  const list = await readFollowUps();
+  const record: FollowUpRecord = {
+    id: 'fup_' + Math.random().toString(36).substring(2, 9) + Date.now().toString(36),
+    timestamp: new Date().toISOString(),
+    ...data,
+  };
+  list.unshift(record);
+  await writeFollowUps(list);
+  return record;
+}
+
+export async function getFollowUpAnalytics(): Promise<FollowUpSummary> {
+  const records = await readFollowUps();
+  const total = records.length;
+  let participatedSim = 0;
+  let participatedNao = 0;
+  let soughtCenterSim = 0;
+  let soughtCenterNao = 0;
+
+  for (const r of records) {
+    if (r.participated === 'SIM') participatedSim++;
+    if (r.participated === 'NAO') participatedNao++;
+    if (r.sought_center === 'SIM') soughtCenterSim++;
+    if (r.sought_center === 'NAO') soughtCenterNao++;
+  }
+
+  const conversionRate = participatedSim > 0 ? Math.round((soughtCenterSim / participatedSim) * 100) : 0;
+
+  return {
+    total,
+    participatedSim,
+    participatedNao,
+    soughtCenterSim,
+    soughtCenterNao,
+    conversionRate,
+  };
 }
