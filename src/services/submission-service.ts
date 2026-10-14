@@ -58,6 +58,7 @@ export interface AnalyticsSummary {
     awareness_feedback?: string;
   }[];
   followUpStats?: FollowUpSummary;
+  ubsClickStats?: ClickTrackerSummary;
 }
 
 export interface FollowUpRecord {
@@ -76,18 +77,37 @@ export interface FollowUpSummary {
   conversionRate: number;
 }
 
+export interface ClickTrackerRecord {
+  id: string;
+  timestamp: string;
+  target: string;
+  source: 'ACOMPANHAMENTO' | 'RESULTADO' | 'CARD_VACINA';
+}
+
+export interface ClickTrackerSummary {
+  total: number;
+  bySource: {
+    acompanhamento: number;
+    resultado: number;
+    cardVacina: number;
+  };
+}
+
 const IS_VERCEL = !!process.env.VERCEL;
 const DATA_DIR = IS_VERCEL ? '/tmp' : path.join(process.cwd(), 'data');
 const FILE_PATH = path.join(DATA_DIR, 'submissions.json');
 const FOLLOWUP_FILE_PATH = path.join(DATA_DIR, 'followups.json');
+const CLICKS_FILE_PATH = path.join(DATA_DIR, 'clicks.json');
 const BUNDLED_FILE_PATH = path.join(process.cwd(), 'data', 'submissions.json');
 const REDIS_KEY = 'trivax_submissions_v1';
 const REDIS_FOLLOWUP_KEY = 'trivax_followups_v1';
+const REDIS_CLICKS_KEY = 'trivax_clicks_v1';
 
 // Cache em memória para ambientes serverless
 declare global {
   var __TRIVAX_SUBMISSIONS__: SubmissionRecord[] | undefined;
   var __TRIVAX_FOLLOWUPS__: FollowUpRecord[] | undefined;
+  var __TRIVAX_CLICKS__: ClickTrackerRecord[] | undefined;
 }
 
 function getRedisClient(): Redis | null {
@@ -367,6 +387,7 @@ export async function getAnalytics(affiliationFilter?: string): Promise<Analytic
     topConditions,
     recentSubmissions,
     followUpStats: await getFollowUpAnalytics(),
+    ubsClickStats: await getClickAnalytics(),
   };
 }
 
@@ -654,5 +675,99 @@ export async function getFollowUpAnalytics(): Promise<FollowUpSummary> {
     soughtCenterSim,
     soughtCenterNao,
     conversionRate,
+  };
+}
+
+async function readClicks(): Promise<ClickTrackerRecord[]> {
+  const redis = getRedisClient();
+  if (redis) {
+    try {
+      const data = await redis.get<ClickTrackerRecord[]>(REDIS_CLICKS_KEY);
+      if (Array.isArray(data)) {
+        globalThis.__TRIVAX_CLICKS__ = data;
+        return data;
+      }
+    } catch (err) {
+      console.error('Erro ao ler cliques do Upstash Redis:', err);
+    }
+  }
+
+  try {
+    if (!fs.existsSync(DATA_DIR)) {
+      fs.mkdirSync(DATA_DIR, { recursive: true });
+    }
+    if (fs.existsSync(CLICKS_FILE_PATH)) {
+      const raw = fs.readFileSync(CLICKS_FILE_PATH, 'utf-8');
+      const clean = (raw || '').replace(/^\uFEFF/, '').trim();
+      if (clean) {
+        const parsed = JSON.parse(clean);
+        if (Array.isArray(parsed)) {
+          globalThis.__TRIVAX_CLICKS__ = parsed;
+          return parsed;
+        }
+      }
+    }
+  } catch (err) {
+    console.error('Erro ao ler cliques local:', err);
+  }
+
+  return globalThis.__TRIVAX_CLICKS__ || [];
+}
+
+async function writeClicks(list: ClickTrackerRecord[]): Promise<void> {
+  globalThis.__TRIVAX_CLICKS__ = list;
+
+  const redis = getRedisClient();
+  if (redis) {
+    try {
+      await redis.set(REDIS_CLICKS_KEY, list);
+    } catch (err) {
+      console.error('Erro ao gravar cliques no Upstash Redis:', err);
+    }
+  }
+
+  try {
+    if (!fs.existsSync(DATA_DIR)) {
+      fs.mkdirSync(DATA_DIR, { recursive: true });
+    }
+    fs.writeFileSync(CLICKS_FILE_PATH, JSON.stringify(list, null, 2), 'utf-8');
+  } catch (err) {
+    console.error('Erro ao gravar clicks.json:', err);
+  }
+}
+
+export async function trackClick(source: 'ACOMPANHAMENTO' | 'RESULTADO' | 'CARD_VACINA', target = 'DE_OLHO_NA_FILA'): Promise<ClickTrackerRecord> {
+  const list = await readClicks();
+  const record: ClickTrackerRecord = {
+    id: 'clk_' + Math.random().toString(36).substring(2, 9) + Date.now().toString(36),
+    timestamp: new Date().toISOString(),
+    target,
+    source,
+  };
+  list.unshift(record);
+  await writeClicks(list);
+  return record;
+}
+
+export async function getClickAnalytics(): Promise<ClickTrackerSummary> {
+  const records = await readClicks();
+  const total = records.length;
+  let acompanhamento = 0;
+  let resultado = 0;
+  let cardVacina = 0;
+
+  for (const r of records) {
+    if (r.source === 'ACOMPANHAMENTO') acompanhamento++;
+    else if (r.source === 'RESULTADO') resultado++;
+    else if (r.source === 'CARD_VACINA') cardVacina++;
+  }
+
+  return {
+    total,
+    bySource: {
+      acompanhamento,
+      resultado,
+      cardVacina,
+    },
   };
 }

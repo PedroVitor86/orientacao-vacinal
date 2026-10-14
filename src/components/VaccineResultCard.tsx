@@ -2,6 +2,7 @@
 
 import { CheckCircle2, Info, Sparkles, MapPin, ExternalLink, HeartHandshake, ShieldAlert } from 'lucide-react';
 import { EvaluationResult } from '../types';
+import { trackUbsClick } from '@/lib/track-click';
 
 interface VaccineResultCardProps {
   result: EvaluationResult;
@@ -82,6 +83,7 @@ export const VaccineResultCard: React.FC<VaccineResultCardProps> = ({ result }) 
             href="https://deolhonafila.prefeitura.sp.gov.br/"
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => trackUbsClick('CARD_VACINA')}
             className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#1A1336] hover:bg-[#251A4F] border border-[#2D67FF]/50 text-white text-xs font-bold transition group shadow-md hover:border-[#2D67FF]"
           >
             <MapPin className="w-3.5 h-3.5 text-[#2D67FF] group-hover:scale-110 transition" />

@@ -18,7 +18,8 @@ import {
   Lock,
   LogOut,
   MailCheck,
-  ExternalLink
+  ExternalLink,
+  MapPin
 } from 'lucide-react';
 import { AnalyticsSummary } from '@/services/submission-service';
 
@@ -57,6 +58,14 @@ const EMPTY_ANALYTICS: AnalyticsSummary = {
     soughtCenterSim: 0,
     soughtCenterNao: 0,
     conversionRate: 0,
+  },
+  ubsClickStats: {
+    total: 0,
+    bySource: {
+      acompanhamento: 0,
+      resultado: 0,
+      cardVacina: 0,
+    },
   },
 };
 
@@ -516,6 +525,68 @@ export default function AdminPage() {
               <span className="font-bold text-amber-400 bg-[#1A1336] px-2 py-0.5 rounded border border-[#2B1C58]">
                 {data?.followUpStats?.soughtCenterNao ?? 0}
               </span>
+            </div>
+          </div>
+        </div>
+
+        {/* BLOCO: MONITORAMENTO DE CLIQUES NO LOCALIZADOR DE UBS (DE OLHO NA FILA) */}
+        <div className="bg-[#120E24] rounded-2xl sm:rounded-3xl border border-[#2B1C58] p-5 sm:p-7 shadow-xl space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#2B1C58] pb-3">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-[#2D67FF] to-[#7B28E2] text-white flex items-center justify-center shrink-0 shadow-md">
+                <MapPin className="w-4 h-4 text-white" />
+              </div>
+              <div>
+                <h3 className="text-base sm:text-lg font-black text-white">
+                  Cliques no Localizador de UBS (De Olho na Fila)
+                </h3>
+                <p className="text-[11px] sm:text-xs text-[#AAB0C6]">
+                  Contabilização em tempo real de pessoas que clicaram para encontrar o posto de vacinação.
+                </p>
+              </div>
+            </div>
+            <a
+              href="https://deolhonafila.prefeitura.sp.gov.br/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#1A1336] hover:bg-[#201844] text-[#2D67FF] hover:text-white border border-[#2D67FF]/40 text-xs font-bold transition w-fit"
+            >
+              <span>Ver site deolhonafila</span>
+              <ExternalLink className="w-3.5 h-3.5" />
+            </a>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
+            <div className="bg-[#1A1336] p-4 rounded-2xl border border-[#2B1C58] space-y-1">
+              <span className="text-[11px] font-bold text-[#AAB0C6] uppercase">Total Geral de Cliques</span>
+              <p className="text-2xl sm:text-3xl font-black text-emerald-400">
+                {data?.ubsClickStats?.total ?? 0}
+              </p>
+              <p className="text-[10px] text-[#AAB0C6]">Cliques em todos os botões de UBS</p>
+            </div>
+
+            <div className="bg-[#1A1336] p-4 rounded-2xl border border-[#2B1C58] space-y-1">
+              <span className="text-[11px] font-bold text-[#AAB0C6] uppercase">Pela Tela de Acompanhamento</span>
+              <p className="text-2xl sm:text-3xl font-black text-[#B387F7]">
+                {data?.ubsClickStats?.bySource?.acompanhamento ?? 0}
+              </p>
+              <p className="text-[10px] text-[#AAB0C6]">Disparo do e-mail de conscientização</p>
+            </div>
+
+            <div className="bg-[#1A1336] p-4 rounded-2xl border border-[#2B1C58] space-y-1">
+              <span className="text-[11px] font-bold text-[#AAB0C6] uppercase">Pela Tela de Resultado</span>
+              <p className="text-2xl sm:text-3xl font-black text-[#2D67FF]">
+                {data?.ubsClickStats?.bySource?.resultado ?? 0}
+              </p>
+              <p className="text-[10px] text-[#AAB0C6]">Rodapé da página pós-questionário</p>
+            </div>
+
+            <div className="bg-[#1A1336] p-4 rounded-2xl border border-[#2B1C58] space-y-1">
+              <span className="text-[11px] font-bold text-[#AAB0C6] uppercase">Pelos Cards de Vacina</span>
+              <p className="text-2xl sm:text-3xl font-black text-cyan-400">
+                {data?.ubsClickStats?.bySource?.cardVacina ?? 0}
+              </p>
+              <p className="text-[10px] text-[#AAB0C6]">Diretamente no card da vacina indicada</p>
             </div>
           </div>
         </div>

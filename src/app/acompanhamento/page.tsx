@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
+import { trackUbsClick } from '@/lib/track-click';
 
 export default function AcompanhamentoPage() {
   const [participated, setParticipated] = useState<'SIM' | 'NAO' | null>(null);
@@ -297,6 +298,7 @@ export default function AcompanhamentoPage() {
                         href="https://deolhonafila.prefeitura.sp.gov.br/"
                         target="_blank"
                         rel="noopener noreferrer"
+                        onClick={() => trackUbsClick('ACOMPANHAMENTO')}
                         className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-[#2D67FF] to-[#7B28E2] text-white text-xs sm:text-sm font-bold transition shadow-lg shadow-[#2D67FF]/25 hover:opacity-95"
                       >
                         <MapPin className="w-4 h-4 text-white" />

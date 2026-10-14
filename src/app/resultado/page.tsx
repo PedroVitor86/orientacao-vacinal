@@ -30,6 +30,7 @@ import { useQuizStore } from '@/store/useQuizStore';
 import { defaultRuleEngine } from '@/engine/rule-engine';
 import { RuleDefinition } from '@/types';
 import rulesData from '@/config/rules.json';
+import { trackUbsClick } from '@/lib/track-click';
 
 const rules = rulesData as unknown as RuleDefinition[];
 
@@ -408,6 +409,7 @@ export default function ResultadoPage() {
               href="https://deolhonafila.prefeitura.sp.gov.br/"
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => trackUbsClick('RESULTADO')}
               className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full bg-[#130E2A] hover:bg-[#201742] text-white text-xs sm:text-sm font-semibold border border-[#2B1C58] transition cursor-pointer"
             >
               <MapPin className="w-4 h-4 text-[#2D67FF]" />
